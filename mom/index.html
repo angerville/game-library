@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>무서운 엄마 · AI 윤리 퀴즈</title>
+<meta name="description" content="엄마의 AI 윤리 시험을 통과하고 용돈 400元을 모아 밖으로 놀러 나가는 퀴즈 게임 (수제 요공르트 팀)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='12' r='9' fill='%233b2722'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='24' fill='%23f2b48f'/%3E%3Cpath d='M12 32c0-18 40-18 40 0-8-8-32-8-40 0z' fill='%233b2722'/%3E%3Cpath d='M18 28l10 5M46 28l-10 5' stroke='%233b2722' stroke-width='4' stroke-linecap='round'/%3E%3Cellipse cx='32' cy='48' rx='7' ry='5' fill='%238a2b2b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/fonts.css">
+<style>
+:root{
+  --ink:#2b2a3a; --ink-soft:#5b5a6e; --paper:#fffaf0; --paper-2:#fbf0dc;
+  --wall:#f7e4c6; --wall-2:#efcfa4; --wood:#a0603a; --wood-2:#7d4628;
+  --red:#e4573d; --red-soft:#ffe3dc; --green:#2f9466; --green-soft:#dcf3e5;
+  --gold:#f2b632; --gold-soft:#fff1c7; --blue:#3d7fb8; --blue-soft:#e1eefa;
+  --shadow:0 14px 0 #d9c3a1, 0 26px 40px #5a3e2a38;
+  --radius:24px;
+  --font-title:'Jua','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  --font-body:'Gowun Dodum','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--font-body); color:var(--ink); min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 8%, #ffe9c7 0 18%, transparent 19%),
+    radial-gradient(circle at 92% 88%, #ffd7c2 0 14%, transparent 15%),
+    linear-gradient(160deg,#f9dcb4 0%,#f1bf98 55%,#d98f74 100%);
+  -webkit-tap-highlight-color:transparent;
+}
+button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.hidden{display:none!important}
+.title-font{font-family:var(--font-title);font-weight:400;letter-spacing:.01em}
+
+.app{max-width:1180px;margin:0 auto;padding:14px 16px 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-badge{width:44px;height:44px;border-radius:14px;background:var(--paper);display:grid;place-items:center;box-shadow:0 4px 0 #d9c3a1}
+.brand small{display:block;font-size:12px;color:var(--ink-soft);letter-spacing:.08em}
+.brand b{font-family:var(--font-title);font-weight:400;font-size:24px;line-height:1}
+.top-actions{display:flex;gap:8px}
+.chip-btn{background:var(--paper);border-radius:999px;padding:9px 14px;font-weight:700;font-size:14px;box-shadow:0 4px 0 #d9c3a1;display:inline-flex;align-items:center;gap:6px}
+.chip-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #d9c3a1}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:14px 22px;font-family:var(--font-title);font-size:20px;transition:transform .12s, box-shadow .12s, filter .12s}
+.btn-primary{background:var(--ink);color:#fff;box-shadow:0 6px 0 #14131f}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 6px 0 #a83a26}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 6px 0 #1c6646}
+.btn-light{background:var(--paper);color:var(--ink);box-shadow:0 6px 0 #d4bd99}
+.btn:hover:not(:disabled){filter:brightness(1.07)}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #0003}
+.btn:disabled{opacity:.45}
+
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow)}
+
+/* ---------- 타이틀 ---------- */
+.title-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center;margin-top:10px}
+.title-art{position:relative;aspect-ratio:1/1;max-width:500px;width:100%;justify-self:center}
+.title-art svg{width:100%;height:100%;display:block}
+.title-card{padding:34px 32px}
+.title-card .eyebrow{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:6px 14px;font-size:14px;font-weight:700;margin-bottom:12px}
+.title-card h1{font-family:var(--font-title);font-weight:400;font-size:clamp(46px,7vw,78px);line-height:1;margin:0 0 12px;color:var(--ink);text-shadow:4px 4px 0 var(--gold-soft)}
+.title-card p.lead{font-size:18px;line-height:1.7;margin:0 0 22px;color:var(--ink-soft)}
+.title-buttons{display:flex;flex-wrap:wrap;gap:12px}
+.title-meta{margin-top:20px;font-size:14px;color:var(--ink-soft)}
+.peek-door{transform-box:fill-box;transform-origin:left center;animation:doorPeek 3.2s ease-in-out infinite}
+@keyframes doorPeek{0%,100%{transform:scaleX(1)}40%,70%{transform:scaleX(.62)}}
+.peek-mom{animation:momPeek 3.2s ease-in-out infinite}
+@keyframes momPeek{0%,100%{transform:translateX(-60px)}40%,70%{transform:translateX(0)}}
+.knock{animation:knock 3.2s steps(1) infinite;opacity:0}
+@keyframes knock{0%{opacity:1}12%{opacity:0}18%{opacity:1}30%{opacity:0}}
+
+/* ---------- 게임 방법 ---------- */
+.panel{max-width:860px;margin:10px auto 0;padding:30px}
+.panel h2{font-family:var(--font-title);font-weight:400;font-size:34px;margin:0 0 6px}
+.panel .sub{color:var(--ink-soft);margin:0 0 20px}
+.rule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.rule{display:flex;gap:14px;align-items:flex-start;background:var(--paper-2);border-radius:18px;padding:16px}
+.rule .ico{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:#fff}
+.rule h3{margin:2px 0 4px;font-size:18px;font-family:var(--font-title);font-weight:400}
+.rule p{margin:0;line-height:1.6;font-size:15px}
+.warn-tag{display:inline-block;background:var(--red);color:#fff;font-weight:700;border-radius:999px;padding:4px 12px;font-size:13px;margin-bottom:10px}
+.panel-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+
+/* ---------- 공부 (책상) ---------- */
+.study{position:relative;max-width:980px;margin:6px auto 0}
+.study-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.study-top .tag{font-family:var(--font-title);font-size:22px}
+.timer{flex:1;max-width:360px;height:16px;background:#ffffff8c;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 4px #0002}
+.timer i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:999px}
+.review-bubble{display:flex;align-items:center;gap:12px;background:var(--red);color:#fff;border-radius:18px;padding:12px 16px;margin-bottom:12px;font-size:17px;font-weight:700;box-shadow:0 6px 0 #a83a26}
+.review-bubble svg{flex:none}
+.desk-scene{position:relative;padding:26px 18px 70px;border-radius:30px;background:linear-gradient(#0000 0 62%, var(--wood) 62%);overflow:hidden}
+.desk-scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:38%;background:repeating-linear-gradient(2deg,#0000 0 22px,#00000012 22px 24px);pointer-events:none}
+.book{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;max-width:900px;margin:0 auto;filter:drop-shadow(0 18px 18px #3a20103d)}
+.book-page{background:var(--paper);padding:28px 28px 30px;min-height:360px;position:relative;
+  background-image:repeating-linear-gradient(#0000 0 33px,#e9dcc6 33px 34px);background-position:0 70px}
+.book-page.left{border-radius:20px 4px 4px 20px;box-shadow:inset -18px 0 22px -14px #b8946a}
+.book-page.right{border-radius:4px 20px 20px 4px;box-shadow:inset 18px 0 22px -14px #b8946a}
+.book-kicker{color:var(--red);font-weight:700;font-size:14px;margin:0 0 2px}
+.book-title{font-family:var(--font-title);font-weight:400;font-size:26px;margin:0 0 14px}
+.promise{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;margin:0 -10px 6px;border-radius:12px;line-height:1.65;font-size:16px;transition:background .3s}
+.promise .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--font-title);font-size:16px;margin-top:1px}
+.promise b{font-family:var(--font-title);font-weight:400;font-size:17px;color:var(--red);margin-right:4px}
+.promise.highlight{background:linear-gradient(transparent 8%, #ffe57a 8% 92%, transparent 92%);animation:hlPulse 1.2s ease-in-out 3}
+@keyframes hlPulse{50%{transform:scale(1.02)}}
+.study-actions{position:relative;z-index:1;display:flex;justify-content:center;gap:12px;margin-top:22px}
+.pencil{position:absolute;right:6%;bottom:26px;width:180px;z-index:1;transform:rotate(-8deg)}
+.mug{position:absolute;left:5%;bottom:22px;width:76px;z-index:1}
+
+/* ---------- 게임 화면 ---------- */
+.hud{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:stretch}
+.stat{background:var(--paper);border-radius:16px;padding:8px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 0 #d9c3a1;min-height:52px}
+.stat .lbl{font-size:12px;color:var(--ink-soft);display:block}
+.stat .val{font-family:var(--font-title);font-size:21px;line-height:1.1}
+.hpbar{width:120px;height:12px;border-radius:99px;background:#f0ddd5;overflow:hidden;margin-top:3px}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a63,var(--red));border-radius:99px;transition:width .5s}
+.goalbar{width:150px;height:12px;border-radius:99px;background:#efe3c6;overflow:hidden;margin-top:3px}
+.goalbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd65a,var(--gold));border-radius:99px;transition:width .5s}
+.stat.combo .val{color:var(--red)}
+.hud-spacer{flex:1}
+.shop-btn{font-size:19px;padding:10px 18px}
+.buffs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.buff{background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px;animation:pop .35s}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+.game-grid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}
+.room{position:relative;height:clamp(240px,30vw,330px);border-radius:28px;overflow:hidden;border:5px solid var(--paper);box-shadow:0 10px 28px #5a3e2a30;background:var(--wall)}
+.room > svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.door-panel{transform-box:fill-box;transform-origin:right center;transition:transform .5s ease}
+.room.door-open .door-panel{transform:scaleX(.18)}
+.clock-hand{transform-box:view-box;transform-origin:390px 70px}
+.clock-hand.min{animation:spin 12s linear infinite}
+.clock-hand.hour{animation:spin 144s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cloud-move{animation:cloud 14s linear infinite}
+@keyframes cloud{from{transform:translateX(-60px)}to{transform:translateX(120px)}}
+
+.mom-wrap{position:absolute;bottom:-8px;left:60%;width:clamp(140px,18vw,206px);transform:translateX(-50%);z-index:2}
+.mom-wrap.enter{animation:momEnter .9s cubic-bezier(.2,.9,.3,1.1) both}
+@keyframes momEnter{from{transform:translateX(120%);opacity:0}to{transform:translateX(-50%);opacity:1}}
+.mom-wrap.shake{animation:momShake .55s ease-in-out}
+@keyframes momShake{0%,100%{transform:translateX(-50%)}20%{transform:translateX(-56%) rotate(-3deg)}40%{transform:translateX(-44%) rotate(3deg)}60%{transform:translateX(-55%) rotate(-2deg)}80%{transform:translateX(-46%) rotate(2deg)}}
+.mom-wrap.hop{animation:momHop .6s ease}
+@keyframes momHop{0%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-16px)}}
+.mom svg{width:100%;display:block}
+.mom .m{display:none}
+.mom[data-mood="calm"] .m-calm,.mom[data-mood="angry"] .m-angry,.mom[data-mood="furious"] .m-furious,.mom[data-mood="happy"] .m-happy{display:inline}
+.steam circle{animation:steam 1s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.steam circle:nth-child(2){animation-delay:.33s}.steam circle:nth-child(3){animation-delay:.66s}
+@keyframes steam{from{transform:translateY(8px) scale(.6);opacity:.9}to{transform:translateY(-26px) scale(1.4);opacity:0}}
+.vein{animation:vein .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes vein{to{transform:scale(1.25)}}
+
+.speech{position:absolute;z-index:3;left:6%;top:16px;max-width:min(48%,340px);background:#fff;border-radius:20px;padding:12px 16px;font-family:var(--font-title);font-size:clamp(16px,2vw,21px);line-height:1.35;box-shadow:0 6px 0 #0000001a;animation:pop .35s}
+.speech::after{content:"";position:absolute;right:-14px;bottom:18px;border:10px solid transparent;border-left:16px solid #fff}
+.speech.angry{background:var(--red);color:#fff}
+.speech.angry::after{border-left-color:var(--red)}
+.speech.happy{background:var(--green);color:#fff}
+.speech.happy::after{border-left-color:var(--green)}
+.room-desk{position:absolute;left:-2%;right:-2%;bottom:-6px;height:30px;z-index:4;background:linear-gradient(var(--wood),var(--wood-2));border-radius:40% 40% 0 0/100% 100% 0 0}
+.flash{position:absolute;inset:0;z-index:5;pointer-events:none;background:#ff3b2f;opacity:0}
+.flash.on{animation:flash .5s ease-out}
+@keyframes flash{0%{opacity:.45}100%{opacity:0}}
+.screen-shake{animation:screenShake .45s}
+@keyframes screenShake{0%,100%{transform:none}25%{transform:translate(-6px,3px)}50%{transform:translate(6px,-3px)}75%{transform:translate(-4px,2px)}}
+.float-txt{position:absolute;z-index:6;font-family:var(--font-title);font-size:30px;pointer-events:none;animation:floatUp 1.2s ease-out forwards;text-shadow:0 3px 0 #fff}
+@keyframes floatUp{from{transform:translateY(0);opacity:1}to{transform:translateY(-70px);opacity:0}}
+
+.exam{position:relative;margin-top:16px;padding:22px 24px 24px 64px;border-radius:20px;background:var(--paper);box-shadow:var(--shadow);
+  background-image:linear-gradient(90deg,#0000 46px,#f19a8a 46px 48px,#0000 48px),repeating-linear-gradient(#0000 0 35px,#ece0c9 35px 36px)}
+.exam-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.exam-head .qno{font-family:var(--font-title);font-size:18px;color:var(--red)}
+.exam-head .rule-tag{font-size:13px;color:var(--ink-soft);background:#fff;border-radius:999px;padding:4px 10px}
+.exam h2{font-size:clamp(19px,2.4vw,24px);line-height:1.5;margin:0 0 14px;font-weight:700}
+.hint-box{background:var(--green-soft);border-radius:14px;padding:10px 14px;margin-bottom:12px;font-weight:700;display:flex;gap:8px;align-items:flex-start;animation:pop .3s}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.answer{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:3px solid #e6d5bb;border-radius:16px;padding:12px 14px;font-size:16px;line-height:1.5;font-weight:700;min-height:62px;transition:border-color .15s, transform .12s, background .15s}
+.answer .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--paper-2);font-family:var(--font-title);font-size:16px}
+.answer:hover:not(:disabled){border-color:var(--ink);transform:translateY(-2px)}
+.answer:disabled{cursor:default}
+.answer.correct{background:var(--green-soft);border-color:var(--green)}
+.answer.correct .n{background:var(--green);color:#fff}
+.answer.wrong{background:var(--red-soft);border-color:var(--red)}
+.answer.wrong .n{background:var(--red);color:#fff}
+.answer.dim{opacity:.55}
+.feedback{margin-top:16px;border-radius:18px;padding:16px 18px;animation:pop .3s}
+.feedback.good{background:var(--green-soft);border:3px solid var(--green)}
+.feedback.bad{background:var(--red-soft);border:3px solid var(--red)}
+.feedback h3{margin:0 0 6px;font-family:var(--font-title);font-weight:400;font-size:24px}
+.feedback.good h3{color:var(--green)}.feedback.bad h3{color:var(--red)}
+.feedback p{margin:0 0 6px;line-height:1.65}
+.feedback .tip{display:flex;gap:8px;align-items:flex-start;background:#ffffffb3;border-radius:12px;padding:8px 12px;margin-top:8px;font-size:15px}
+.feedback .btn{margin-top:12px}
+
+.shelf{padding:18px;position:sticky;top:12px}
+.shelf h2{font-family:var(--font-title);font-weight:400;font-size:24px;margin:0}
+.shelf .sub{font-size:13px;color:var(--ink-soft);margin:2px 0 12px}
+.shelf-items{display:grid;gap:8px}
+.item-btn{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:3px solid #e6d5bb;border-radius:16px;padding:8px 10px;text-align:left;transition:transform .12s,border-color .15s}
+.item-btn:hover:not(:disabled){border-color:var(--ink);transform:translateY(-2px)}
+.item-btn:disabled{opacity:.42}
+.item-btn .ic{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:var(--paper-2)}
+.item-btn .nm{font-weight:700;font-size:15px;display:block}
+.item-btn .ds{font-size:12px;color:var(--ink-soft);display:block;line-height:1.35}
+.item-btn .cnt{margin-left:auto;font-family:var(--font-title);font-size:20px;min-width:30px;text-align:right}
+.shelf-status{min-height:44px;margin-top:10px;font-size:14px;font-weight:700;color:var(--blue)}
+.shelf-board{margin-top:10px;background:var(--paper-2);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.6}
+
+/* ---------- 상점 ---------- */
+.modal{position:fixed;inset:0;z-index:50;background:#2b2a3ab8;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .card{width:100%;max-width:620px;max-height:92vh;overflow:auto;padding:24px}
+.shop-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.shop-head h2{font-family:var(--font-title);font-weight:400;font-size:30px;margin:0}
+.wallet{display:inline-flex;align-items:center;gap:8px;background:var(--gold-soft);border-radius:999px;padding:6px 14px;font-family:var(--font-title);font-size:20px;margin:12px 0 16px}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shop-item{display:flex;flex-direction:column;gap:6px;background:#fff;border:3px solid #e6d5bb;border-radius:18px;padding:12px;text-align:left;transition:transform .12s,border-color .15s}
+.shop-item:hover:not(:disabled){border-color:var(--ink);transform:translateY(-2px)}
+.shop-item:disabled{opacity:.45}
+.shop-item .row{display:flex;align-items:center;gap:10px}
+.shop-item .ic{width:48px;height:48px;border-radius:14px;background:var(--paper-2);display:grid;place-items:center;flex:none}
+.shop-item .nm{font-family:var(--font-title);font-size:20px}
+.shop-item .price{margin-left:auto;font-family:var(--font-title);font-size:20px;color:var(--wood-2);white-space:nowrap}
+.shop-item .ds{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+.shop-item.win{grid-column:1/-1;background:linear-gradient(120deg,#2b2a3a,#4b3f6b);color:#fff;border-color:#2b2a3a}
+.shop-item.win .ds,.shop-item.win .price{color:#ffe08a}
+.shop-item.win .ic{background:#ffffff22}
+.shop-status{min-height:26px;margin-top:12px;font-weight:700;color:var(--green)}
+
+/* ---------- 결과 ---------- */
+.ending{max-width:980px;margin:6px auto 0;padding:22px;position:relative;overflow:hidden}
+.win-scene{border-radius:22px;overflow:hidden;background:#bfe8ff;aspect-ratio:1000/480}
+.win-scene svg{width:100%;height:100%;display:block}
+.end-title{font-family:var(--font-title);font-weight:400;font-size:clamp(30px,4.6vw,48px);margin:18px 0 6px;text-align:center}
+.end-lead{text-align:center;font-size:18px;color:var(--ink-soft);margin:0 0 16px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 16px}
+.stats div{background:var(--paper-2);border-radius:16px;padding:12px;text-align:center}
+.stats b{display:block;font-family:var(--font-title);font-weight:400;font-size:28px}
+.stats span{font-size:13px;color:var(--ink-soft)}
+.recap{background:var(--gold-soft);border-radius:18px;padding:16px 18px;margin-bottom:16px}
+.recap h3{font-family:var(--font-title);font-weight:400;margin:0 0 8px;font-size:22px}
+.recap ol{margin:0;padding-left:22px;line-height:1.8}
+.end-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.lose-art{width:min(260px,60%);margin:0 auto;display:block}
+.confetti{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;pointer-events:none;animation:fall linear forwards;z-index:5}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.sun-rays{transform-box:fill-box;transform-origin:center;animation:spin 18s linear infinite}
+.swing{transform-box:view-box;transform-origin:700px 300px;animation:swing 2.2s ease-in-out infinite alternate}
+@keyframes swing{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+.wave-arm{transform-box:fill-box;transform-origin:0% 100%;animation:wave .5s ease-in-out infinite alternate}
+@keyframes wave{to{transform:rotate(-38deg)}}
+.ball{animation:ball .9s cubic-bezier(.5,0,.5,1) infinite alternate}
+@keyframes ball{to{transform:translateY(-70px)}}
+.leg-a{transform-box:fill-box;transform-origin:50% 0;animation:leg .28s ease-in-out infinite alternate}
+.leg-b{transform-box:fill-box;transform-origin:50% 0;animation:leg .28s ease-in-out infinite alternate-reverse}
+@keyframes leg{from{transform:rotate(-30deg)}to{transform:rotate(30deg)}}
+.flutter{transform-box:fill-box;transform-origin:center;animation:flutter .2s ease-in-out infinite alternate}
+@keyframes flutter{to{transform:scaleX(.3)}}
+.bfly-a{animation:bflyA 7s ease-in-out infinite}
+@keyframes bflyA{0%,100%{transform:translate(0,0)}25%{transform:translate(60px,-30px)}50%{transform:translate(120px,10px)}75%{transform:translate(50px,30px)}}
+.bfly-b{animation:bflyA 9s ease-in-out infinite reverse}
+
+/* ---------- 크레딧 ---------- */
+.credit-list{display:grid;gap:10px;margin:0}
+.credit-row{display:grid;grid-template-columns:150px 1fr;gap:12px;background:var(--paper-2);border-radius:14px;padding:12px 16px;align-items:center}
+.credit-row dt{font-family:var(--font-title);font-size:18px;margin:0}
+.credit-row dd{margin:0;line-height:1.6}
+.credit-sec{font-family:var(--font-title);font-weight:400;font-size:22px;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+.credit-sec small{font-family:var(--font-body);font-size:14px;color:var(--ink-soft)}
+
+@media (max-width:900px){
+  .title-wrap{grid-template-columns:1fr}
+  .title-art{max-width:360px}
+  .game-grid{grid-template-columns:1fr}
+  .shelf{position:static}
+  .shelf-items{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+}
+@media (max-width:640px){
+  .app{padding:10px 12px 30px}
+  .brand b{font-size:20px}
+  .chip-btn .t{display:none}
+  .rule-grid,.shop-grid{grid-template-columns:1fr}
+  .book{grid-template-columns:1fr}
+  .book-page.left{border-radius:20px 20px 4px 4px;min-height:0}
+  .book-page.right{border-radius:4px 4px 20px 20px;min-height:0}
+  .pencil,.mug{display:none}
+  .answers{grid-template-columns:1fr}
+  .exam{padding:18px 16px 18px 48px;background-image:linear-gradient(90deg,#0000 32px,#f19a8a 32px 34px,#0000 34px),repeating-linear-gradient(#0000 0 35px,#ece0c9 35px 36px)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .credit-row{grid-template-columns:1fr;gap:2px}
+  .speech{max-width:55%;font-size:15px;padding:10px 12px}
+  .hpbar,.goalbar{width:64px}
+  .hud{gap:6px}
+  .stat{padding:6px 9px;gap:6px;min-height:46px;border-radius:13px}
+  .stat > svg{width:22px;height:22px}
+  .stat .lbl{font-size:10.5px}
+  .stat .val{font-size:16px}
+  .hud-spacer{display:none}
+  .shop-btn{font-size:16px;padding:8px 14px}
+  .room{height:220px}
+  .panel{padding:22px 18px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<!-- 공용 아이콘 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-food" viewBox="0 0 48 48"><path d="M24 6 L42 38 Q24 46 6 38 Z" fill="#fff" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><rect x="14" y="28" width="20" height="13" rx="2" fill="#2f3b2f"/><circle cx="20" cy="20" r="1.6" fill="#2b2a3a"/><circle cx="28" cy="20" r="1.6" fill="#2b2a3a"/><path d="M21 24 q3 2 6 0" stroke="#2b2a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 48 48"><path d="M24 5 L40 11 V24 C40 34 32 40 24 44 C16 40 8 34 8 24 V11 Z" fill="#3d7fb8" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><path d="M24 11 L34 15 V24 C34 30 30 34 24 37 Z" fill="#8cc0ea"/><path d="M17 24 l5 5 9-10" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-double" viewBox="0 0 48 48"><circle cx="19" cy="26" r="13" fill="#f2b632" stroke="#2b2a3a" stroke-width="3"/><circle cx="29" cy="20" r="13" fill="#ffd65a" stroke="#2b2a3a" stroke-width="3"/><text x="29" y="26" text-anchor="middle" font-family="Jua, sans-serif" font-size="15" fill="#7d4628">×2</text></symbol>
+    <symbol id="i-hint" viewBox="0 0 48 48"><path d="M24 5 C14 5 9 13 9 19 C9 26 15 29 16 34 H32 C33 29 39 26 39 19 C39 13 34 5 24 5 Z" fill="#ffe57a" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="34" width="14" height="5" rx="2" fill="#9aa3ad" stroke="#2b2a3a" stroke-width="2.5"/><rect x="19" y="39" width="10" height="4" rx="2" fill="#6b7480"/><path d="M20 22 q4 -6 8 0" stroke="#e48b2a" stroke-width="2.5" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-erase" viewBox="0 0 48 48"><g transform="rotate(-30 24 24)"><rect x="8" y="16" width="32" height="16" rx="4" fill="#ff9fb2" stroke="#2b2a3a" stroke-width="3"/><rect x="8" y="16" width="12" height="16" rx="3" fill="#7ec3f0" stroke="#2b2a3a" stroke-width="3"/></g><path d="M30 38 q4 3 8 0 M33 42 q3 2 6 0" stroke="#9aa3ad" stroke-width="2.5" fill="none" stroke-linecap="round"/><text x="36" y="13" font-family="Jua, sans-serif" font-size="11" fill="#e4573d">?</text></symbol>
+    <symbol id="i-win" viewBox="0 0 48 48"><path d="M14 6 H34 V18 C34 26 29 30 24 30 C19 30 14 26 14 18 Z" fill="#ffd65a" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><path d="M14 10 H7 C7 18 10 21 15 21 M34 10 H41 C41 18 38 21 33 21" stroke="#2b2a3a" stroke-width="3" fill="none"/><rect x="21" y="30" width="6" height="7" fill="#f2b632" stroke="#2b2a3a" stroke-width="2.5"/><rect x="14" y="37" width="20" height="6" rx="2" fill="#a0603a" stroke="#2b2a3a" stroke-width="2.5"/><path d="M24 11 l2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5z" fill="#fff"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 48 48"><path d="M24 42 C10 32 4 24 4 16 C4 9 10 5 15 5 C19 5 22 7 24 11 C26 7 29 5 33 5 C38 5 44 9 44 16 C44 24 38 32 24 42 Z" fill="#e4573d" stroke="#2b2a3a" stroke-width="3"/><path d="M12 14 q2 -4 6 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#ffd65a" stroke="#2b2a3a" stroke-width="3"/><circle cx="24" cy="24" r="13" fill="none" stroke="#e8a51f" stroke-width="2.5"/><text x="24" y="30" text-anchor="middle" font-family="Jua, sans-serif" font-size="17" fill="#7d4628">元</text></symbol>
+    <symbol id="i-fire" viewBox="0 0 48 48"><path d="M24 4 C30 14 38 18 38 30 C38 38 32 44 24 44 C16 44 10 38 10 30 C10 22 16 18 18 12 C20 18 22 20 24 20 C25 14 24 9 24 4 Z" fill="#ff8a3d" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><path d="M24 26 C28 30 30 32 30 36 C30 40 27 42 24 42 C21 42 18 40 18 36 C18 32 21 30 24 26 Z" fill="#ffd65a"/></symbol>
+    <symbol id="i-book" viewBox="0 0 48 48"><path d="M4 10 C12 8 18 9 24 13 C30 9 36 8 44 10 V40 C36 38 30 39 24 42 C18 39 12 38 4 40 Z" fill="#fff" stroke="#2b2a3a" stroke-width="3" stroke-linejoin="round"/><path d="M24 13 V42" stroke="#2b2a3a" stroke-width="3"/><path d="M9 17 h10 M9 23 h10 M29 17 h10 M29 23 h10 M29 29 h7" stroke="#e4573d" stroke-width="2.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge" aria-hidden="true"><svg width="30" height="30"><use href="#i-book"/></svg></div>
+      <div><small>AI 윤리 · 1인칭 퀴즈</small><b>무서운 엄마</b></div>
+    </div>
+    <div class="top-actions">
+      <button class="chip-btn" id="sound-btn" type="button" aria-pressed="true"><svg width="18" height="18"><use href="#i-sound"/></svg><span class="t">소리 켜짐</span></button>
+      <button class="chip-btn hidden" id="home-btn" type="button"><svg width="18" height="18"><use href="#i-home"/></svg><span class="t">처음으로</span></button>
+    </div>
+  </header>
+
+  <!-- 1. 타이틀 -->
+  <section id="s-title">
+    <div class="title-wrap">
+      <div class="title-art" aria-hidden="true">
+        <svg viewBox="0 0 500 500">
+          <defs>
+            <linearGradient id="tw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe9cc"/><stop offset="1" stop-color="#f0cfa2"/></linearGradient>
+            <clipPath id="doorClip"><rect x="150" y="70" width="210" height="370"/></clipPath>
+          </defs>
+          <circle cx="250" cy="250" r="236" fill="url(#tw)" stroke="#fffaf0" stroke-width="12"/>
+          <rect x="136" y="56" width="238" height="398" rx="10" fill="#7d4628"/>
+          <rect x="150" y="70" width="210" height="384" fill="#3a2418"/>
+          <g clip-path="url(#doorClip)">
+            <g class="peek-mom">
+              <ellipse cx="300" cy="400" rx="70" ry="60" fill="#5f7f8c"/>
+              <circle cx="300" cy="170" r="28" fill="#3b2722"/>
+              <ellipse cx="300" cy="190" rx="20" ry="7" fill="#e4573d"/>
+              <path d="M228 260 C220 200,380 200,372 260 L376 330 C350 345,250 345,224 330Z" fill="#3b2722"/>
+              <ellipse cx="300" cy="268" rx="62" ry="66" fill="#f2b48f"/>
+              <path d="M238 258 C238 206,282 192,304 194 C340 196,364 218,362 254 C342 230,322 222,300 224 C278 226,256 236,238 258Z" fill="#3b2722"/>
+              <path d="M258 246 L288 260 M342 246 L312 260" stroke="#3b2722" stroke-width="7" stroke-linecap="round"/>
+              <circle cx="276" cy="272" r="7" fill="#2b2a3a"/><circle cx="324" cy="272" r="7" fill="#2b2a3a"/>
+              <circle cx="278" cy="270" r="2.2" fill="#fff"/><circle cx="326" cy="270" r="2.2" fill="#fff"/>
+              <path d="M284 304 Q300 296 316 304" stroke="#8a2b2b" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <g class="vein" fill="none" stroke="#e4573d" stroke-width="5" stroke-linecap="round"><path d="M340 214 q6 -2 6 -10 M352 214 q0 6 8 8 M352 226 q8 0 8 8 M340 226 q-6 2 -4 10"/></g>
+            </g>
+          </g>
+          <rect class="peek-door" x="150" y="70" width="210" height="384" fill="#c47a48" stroke="#7d4628" stroke-width="4"/>
+          <g class="peek-door" opacity=".9"><rect x="172" y="96" width="166" height="140" rx="8" fill="none" stroke="#a5613a" stroke-width="5"/><rect x="172" y="262" width="166" height="160" rx="8" fill="none" stroke="#a5613a" stroke-width="5"/></g>
+          <circle cx="182" cy="262" r="9" fill="#f2b632" stroke="#7d4628" stroke-width="3"/>
+          <g class="knock" font-family="Jua, sans-serif" fill="#e4573d"><text x="40" y="150" font-size="44" transform="rotate(-12 40 150)">똑똑!</text><text x="392" y="120" font-size="38" transform="rotate(10 392 120)">공부<tspan x="392" dy="42">다 했니?</tspan></text></g>
+          <rect x="60" y="440" width="380" height="26" rx="13" fill="#a0603a"/>
+        </svg>
+      </div>
+      <div class="card title-card">
+        <span class="eyebrow">수제 요공르트 팀의 AI 윤리 퀴즈</span>
+        <h1>무서운 엄마</h1>
+        <p class="lead">책상 위 책으로 <b>AI를 바르게 쓰는 법</b>을 공부하고, 엄마의 시험을 통과하세요.<br>용돈 <b>400元</b>을 모아 상점에서 <b>‘승리’</b>를 사면, 드디어 밖에 나가 놀 수 있어요!</p>
+        <div class="title-buttons">
+          <button class="btn btn-red" id="btn-start" type="button">공부 시작하기</button>
+          <button class="btn btn-light" id="btn-howto" type="button">게임 방법</button>
+          <button class="btn btn-light" id="btn-credits" type="button">만든 사람·출처</button>
+        </div>
+        <p class="title-meta">대련한국국제학교 6학년 · ㅇㅈㅇ, ㅊㄱㅎ, ㄱㅅㄱ, ㅎㅇㅈ</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 게임 방법 -->
+  <section id="s-howto" class="hidden">
+    <div class="card panel">
+      <span class="warn-tag">꼭 읽으세요</span>
+      <h2>게임 규칙</h2>
+      <p class="sub">3분이면 다 읽을 수 있어요. 엄마는 생각보다 무서워요!</p>
+      <div class="rule-grid">
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-book"/></svg></div><div><h3>① 먼저 공부해요</h3><p>책에 적힌 AI 약속 6가지를 읽어요. 확인 버튼을 누르면 엄마가 들어와 시험을 시작해요.</p></div></div>
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-coin"/></svg></div><div><h3>② 맞히면 용돈 25元</h3><p>정답을 맞히면 엄마가 용돈 25元을 줘요. 3문제 연속으로 맞히면 보너스 10元!</p></div></div>
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-heart"/></svg></div><div><h3>③ 틀리면 HP −10, 복습</h3><p>HP는 100에서 시작해요. 틀리면 용돈 없이 HP가 10 줄고, <b>책으로 돌아가 복습</b>해야 해요. 틀린 문제는 나중에 다시 나와요.</p></div></div>
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-shield"/></svg></div><div><h3>④ 상점과 선반</h3><p>상점에서 아이템을 사고, 책상 옆 선반을 눌러 사용해요. 모든 아이템은 한 번만 쓸 수 있어요.</p></div></div>
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-erase"/></svg></div><div><h3>⑤ 아이템 5가지</h3><p>음식 15元(HP +20) · 방패 10元(다음 오답 HP 지킴) · 용돈 2배 30元 · 힌트 5元 · 엄마 기억 삭제 20元(틀려도 용돈 받기)</p></div></div>
+        <div class="rule"><div class="ico"><svg width="38" height="38"><use href="#i-win"/></svg></div><div><h3>⑥ 승리와 게임 오버</h3><p>400元을 모아 상점에서 ‘승리’를 사면 밖에 나가 놀 수 있어요. HP가 0이 되면 게임이 끝나요.</p></div></div>
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-red" id="howto-start" type="button">확인 · 공부 시작하기</button>
+        <button class="btn btn-light" data-go="title" type="button">돌아가기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 공부 / 복습 -->
+  <section id="s-study" class="hidden">
+    <div class="study">
+      <div id="review-bubble" class="review-bubble hidden" role="status">
+        <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M12 18 l9 4 M36 18 l-9 4" stroke="#3b2722" stroke-width="3.5" stroke-linecap="round"/><circle cx="18" cy="26" r="3" fill="#2b2a3a"/><circle cx="30" cy="26" r="3" fill="#2b2a3a"/><ellipse cx="24" cy="36" rx="6" ry="4" fill="#8a2b2b"/></svg>
+        <span id="review-text">엄마: 틀렸잖아! 책 ③번을 다시 읽어!</span>
+      </div>
+      <div class="study-top">
+        <span class="tag" id="study-tag">내 시점 · 책상 위에 펼쳐진 책</span>
+        <div class="timer" aria-hidden="true"><i id="study-timer"></i></div>
+      </div>
+      <div class="desk-scene">
+        <div class="book">
+          <div class="book-page left">
+            <p class="book-kicker">오늘의 공부 · AI 윤리</p>
+            <h2 class="book-title">AI를 바르게 쓰는 6가지 약속</h2>
+            <div id="promises-left"></div>
+          </div>
+          <div class="book-page right"><div id="promises-right" style="margin-top:66px"></div></div>
+        </div>
+        <svg class="mug" viewBox="0 0 80 90" aria-hidden="true"><path d="M58 34 h8 a10 10 0 0 1 0 20 h-8" fill="none" stroke="#e4573d" stroke-width="7"/><path d="M8 26 h52 v42 a14 14 0 0 1 -14 14 h-24 a14 14 0 0 1 -14 -14z" fill="#e4573d"/><ellipse cx="34" cy="26" rx="26" ry="6" fill="#f4a37a"/><path d="M24 14 q-6 -8 0 -14 M36 16 q-6 -8 0 -14" stroke="#fff" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round"/><text x="34" y="62" text-anchor="middle" font-family="Jua, sans-serif" font-size="14" fill="#fff">요공르트</text></svg>
+        <svg class="pencil" viewBox="0 0 200 30" aria-hidden="true"><rect x="20" y="5" width="150" height="20" fill="#f2b632"/><rect x="20" y="5" width="150" height="7" fill="#ffd65a"/><rect x="5" y="5" width="18" height="20" rx="4" fill="#ff9fb2"/><rect x="20" y="5" width="8" height="20" fill="#bfc4cc"/><path d="M170 5 L195 15 L170 25 Z" fill="#f4d4a8"/><path d="M188 12 L195 15 L188 18Z" fill="#2b2a3a"/></svg>
+        <div class="study-actions">
+          <button class="btn btn-red" id="study-next" type="button" disabled>확인 · 엄마의 시험 보기</button>
+          <button class="btn btn-red hidden" id="review-next" type="button" disabled>다 읽었어요 · 다시 시험 보기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 게임 -->
+  <section id="s-game" class="hidden">
+    <div class="hud">
+      <div class="stat"><svg width="30" height="30" aria-hidden="true"><use href="#i-heart"/></svg><div><span class="lbl">HP</span><span class="val" id="hp-val" aria-live="polite">100 / 100</span><div class="hpbar"><i id="hp-bar" style="width:100%"></i></div></div></div>
+      <div class="stat"><svg width="30" height="30" aria-hidden="true"><use href="#i-coin"/></svg><div><span class="lbl">용돈 (목표 400元)</span><span class="val" id="money-val" aria-live="polite">0 元</span><div class="goalbar"><i id="goal-bar" style="width:0%"></i></div></div></div>
+      <div class="stat combo"><svg width="30" height="30" aria-hidden="true"><use href="#i-fire"/></svg><div><span class="lbl">연속 정답</span><span class="val" id="combo-val">0</span></div></div>
+      <div class="buffs" id="buffs" aria-live="polite"></div>
+      <div class="hud-spacer"></div>
+      <button class="btn btn-primary shop-btn" id="shop-open" type="button"><svg width="26" height="26" aria-hidden="true"><use href="#i-coin"/></svg>상점</button>
+    </div>
+    <div class="game-grid">
+      <div id="play-col">
+        <div class="room" id="room">
+          <svg class="bg" viewBox="0 0 1000 330" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+            <defs>
+              <pattern id="wp" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#f7e4c6"/><circle cx="10" cy="10" r="3" fill="#efcfa4"/><circle cx="30" cy="30" r="3" fill="#efcfa4"/></pattern>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3f4"/><stop offset="1" stop-color="#d9f3ff"/></linearGradient>
+            </defs>
+            <rect width="1000" height="330" fill="url(#wp)"/>
+            <rect y="268" width="1000" height="62" fill="#e7c08e"/>
+            <rect y="262" width="1000" height="10" fill="#c9965f"/>
+            <!-- 창문: 밖은 놀이터 -->
+            <g>
+              <rect x="40" y="40" width="250" height="170" rx="10" fill="#fffaf0"/>
+              <rect x="54" y="54" width="222" height="142" fill="url(#sky)"/>
+              <g class="cloud-move"><ellipse cx="110" cy="86" rx="28" ry="12" fill="#fff"/><ellipse cx="130" cy="80" rx="20" ry="12" fill="#fff"/></g>
+              <circle cx="240" cy="84" r="16" fill="#ffd65a"/>
+              <rect x="54" y="160" width="222" height="36" fill="#86c97a"/>
+              <circle cx="96" cy="150" r="24" fill="#4f9a55"/><rect x="92" y="160" width="8" height="24" fill="#7d4628"/>
+              <path d="M170 196 L180 140 L220 140 L230 196" stroke="#e4573d" stroke-width="5" fill="none"/><path d="M200 140 V172" stroke="#2b2a3a" stroke-width="2"/><rect x="192" y="170" width="16" height="5" fill="#3d7fb8"/>
+              <rect x="163" y="54" width="4" height="142" fill="#fffaf0"/><rect x="54" y="123" width="222" height="4" fill="#fffaf0"/>
+              <path d="M44 40 Q70 120 50 210 L40 210 Z" fill="#f19a8a"/><path d="M286 40 Q260 120 280 210 L290 210 Z" fill="#f19a8a"/>
+            </g>
+            <!-- 시계 -->
+            <circle cx="390" cy="70" r="32" fill="#fffaf0" stroke="#a0603a" stroke-width="6"/>
+            <line class="clock-hand hour" x1="390" y1="70" x2="390" y2="52" stroke="#2b2a3a" stroke-width="5" stroke-linecap="round"/>
+            <line class="clock-hand min" x1="390" y1="70" x2="390" y2="46" stroke="#e4573d" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="390" cy="70" r="4" fill="#2b2a3a"/>
+            <!-- 포스터 -->
+            <g transform="rotate(-3 470 150)"><rect x="420" y="96" width="110" height="130" rx="6" fill="#fffaf0" stroke="#e6d5bb" stroke-width="3"/><text x="475" y="126" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#e4573d">AI 약속</text><path d="M438 146 l6 6 10-12 M438 174 l6 6 10-12 M438 202 l6 6 10-12" stroke="#2f9466" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M462 150 h52 M462 178 h52 M462 206 h40" stroke="#c9b28f" stroke-width="5" stroke-linecap="round"/><circle cx="475" cy="100" r="5" fill="#e4573d"/></g>
+            <!-- 책장 -->
+            <g><rect x="580" y="120" width="120" height="146" fill="#a0603a"/><rect x="588" y="128" width="104" height="62" fill="#7d4628"/><rect x="588" y="198" width="104" height="60" fill="#7d4628"/>
+              <rect x="594" y="140" width="14" height="50" fill="#3d7fb8"/><rect x="610" y="134" width="12" height="56" fill="#e4573d"/><rect x="624" y="146" width="16" height="44" fill="#f2b632"/><rect x="644" y="138" width="12" height="52" fill="#2f9466"/><rect x="660" y="150" width="26" height="40" fill="#fffaf0" transform="rotate(12 673 170)"/>
+              <rect x="596" y="214" width="30" height="44" rx="4" fill="#ff9fb2"/><circle cx="660" cy="240" r="18" fill="#ffd65a"/></g>
+            <!-- 문 -->
+            <rect x="780" y="40" width="170" height="230" fill="#3a2418"/>
+            <rect x="770" y="30" width="190" height="12" rx="4" fill="#7d4628"/><rect x="770" y="30" width="12" height="240" fill="#7d4628"/><rect x="948" y="30" width="12" height="240" fill="#7d4628"/>
+            <g class="door-panel"><rect x="782" y="42" width="166" height="228" fill="#c47a48"/><rect x="800" y="62" width="130" height="80" rx="6" fill="none" stroke="#a5613a" stroke-width="5"/><rect x="800" y="158" width="130" height="92" rx="6" fill="none" stroke="#a5613a" stroke-width="5"/><circle cx="800" cy="160" r="7" fill="#f2b632"/></g>
+          </svg>
+          <div class="speech hidden" id="speech" role="status" aria-live="polite"></div>
+          <div class="mom-wrap" id="mom-wrap">
+            <div class="mom" id="mom" data-mood="calm">
+              <svg viewBox="0 0 240 320" aria-label="엄마" role="img">
+                <ellipse cx="120" cy="314" rx="78" ry="7" fill="#000" opacity=".13"/>
+                <g class="m m-furious steam" fill="#fff" opacity=".9"><circle cx="64" cy="44" r="12"/><circle cx="176" cy="40" r="14"/><circle cx="120" cy="10" r="10"/></g>
+                <path d="M58 118 C48 58,192 58,182 118 L188 196 C168 208,72 208,52 196 Z" fill="#3b2722"/>
+                <circle cx="120" cy="40" r="25" fill="#3b2722"/>
+                <ellipse cx="120" cy="61" rx="21" ry="7" fill="#e4573d"/>
+                <rect x="106" y="160" width="28" height="26" rx="9" fill="#e09f7c"/>
+                <path d="M60 330 L64 216 C66 192,90 180,120 180 C150 180,174 192,176 216 L180 330 Z" fill="#5f7f8c"/>
+                <path d="M104 182 L120 200 L136 182" fill="#fffaf0"/>
+                <path d="M84 210 C96 200,144 200,156 210 L163 330 L77 330 Z" fill="#fff4e3"/>
+                <path d="M84 210 L72 190 M156 210 L168 190" stroke="#fff4e3" stroke-width="6" stroke-linecap="round"/>
+                <rect x="100" y="252" width="40" height="28" rx="7" fill="#f6dcc0"/>
+                <path d="M120 272 C112 266,110 260,114 257 C117 255,120 257,120 260 C120 257,123 255,126 257 C130 260,128 266,120 272 Z" fill="#e4573d"/>
+                <!-- 팔: 차분/기쁨 -->
+                <g class="m m-calm m-happy">
+                  <path d="M66 214 C54 236,52 262,56 290" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <path d="M174 214 C186 236,188 262,184 290" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <circle cx="56" cy="296" r="12" fill="#f2b48f"/><circle cx="184" cy="296" r="12" fill="#f2b48f"/>
+                </g>
+                <!-- 팔: 허리에 손 -->
+                <g class="m m-angry">
+                  <path d="M66 214 C40 230,36 256,72 268" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <path d="M174 214 C200 230,204 256,168 268" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <circle cx="78" cy="268" r="12" fill="#f2b48f"/><circle cx="162" cy="268" r="12" fill="#f2b48f"/>
+                </g>
+                <!-- 팔: 번쩍 -->
+                <g class="m m-furious">
+                  <path d="M66 214 C40 196,34 168,44 140" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <path d="M174 214 C200 196,206 168,196 140" stroke="#5f7f8c" stroke-width="22" fill="none" stroke-linecap="round"/>
+                  <circle cx="44" cy="130" r="15" fill="#f2b48f"/><circle cx="196" cy="130" r="15" fill="#f2b48f"/>
+                  <path d="M36 124 h16 M188 124 h16" stroke="#d48a6a" stroke-width="3" stroke-linecap="round"/>
+                </g>
+                <circle cx="66" cy="120" r="10" fill="#e9a481"/><circle cx="174" cy="120" r="10" fill="#e9a481"/>
+                <ellipse cx="120" cy="114" rx="54" ry="58" fill="#f2b48f"/>
+                <path d="M64 106 C64 62,100 48,124 52 C156 54,180 74,178 110 C160 88,140 80,120 82 C100 84,80 94,64 106 Z" fill="#3b2722"/>
+                <!-- 눈썹 -->
+                <g class="m m-calm m-happy" stroke="#3b2722" stroke-width="5" fill="none" stroke-linecap="round"><path d="M86 98 Q98 91 110 97"/><path d="M130 97 Q142 91 154 98"/></g>
+                <g class="m m-angry m-furious" stroke="#3b2722" stroke-width="6" fill="none" stroke-linecap="round"><path d="M84 92 L110 104"/><path d="M156 92 L130 104"/></g>
+                <!-- 눈 -->
+                <g class="m m-calm m-angry"><ellipse cx="98" cy="118" rx="6.5" ry="8" fill="#2b2a3a"/><ellipse cx="142" cy="118" rx="6.5" ry="8" fill="#2b2a3a"/><circle cx="100" cy="115" r="2.2" fill="#fff"/><circle cx="144" cy="115" r="2.2" fill="#fff"/></g>
+                <g class="m m-furious"><ellipse cx="98" cy="119" rx="11" ry="10" fill="#fff" stroke="#2b2a3a" stroke-width="3"/><ellipse cx="142" cy="119" rx="11" ry="10" fill="#fff" stroke="#2b2a3a" stroke-width="3"/><circle cx="100" cy="121" r="3.5" fill="#e4573d"/><circle cx="140" cy="121" r="3.5" fill="#e4573d"/></g>
+                <g class="m m-happy" stroke="#2b2a3a" stroke-width="5" fill="none" stroke-linecap="round"><path d="M89 121 Q98 110 107 121"/><path d="M133 121 Q142 110 151 121"/></g>
+                <path d="M120 126 q4 8 -3 10" stroke="#d48a6a" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <ellipse cx="84" cy="140" rx="11" ry="7" fill="#f08a7a" opacity=".5"/><ellipse cx="156" cy="140" rx="11" ry="7" fill="#f08a7a" opacity=".5"/>
+                <!-- 입 -->
+                <path class="m m-calm" d="M108 148 Q120 156 132 148" stroke="#8a2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <g class="m m-angry"><path d="M104 150 Q120 140 136 150 Q136 166 120 168 Q104 166 104 150 Z" fill="#8a2b2b"/><path d="M110 162 Q120 156 130 162 Q126 168 120 168 Q114 168 110 162Z" fill="#f08a7a"/></g>
+                <g class="m m-furious"><path d="M96 146 Q120 134 144 146 Q146 176 120 178 Q94 176 96 146 Z" fill="#8a2b2b"/><path d="M100 146 Q120 138 140 146 L139 152 Q120 146 101 152Z" fill="#fff"/><path d="M106 168 Q120 160 134 168 Q128 177 120 177 Q112 177 106 168Z" fill="#f08a7a"/></g>
+                <g class="m m-happy"><path d="M100 142 Q120 170 140 142 Z" fill="#8a2b2b"/><path d="M108 154 Q120 148 132 154 Q126 162 120 162 Q114 162 108 154Z" fill="#f08a7a"/></g>
+                <!-- 화남 표시 -->
+                <g class="m m-angry m-furious vein" fill="none" stroke="#e4573d" stroke-width="5" stroke-linecap="round"><path d="M160 64 q6 -2 6 -10 M172 64 q0 6 8 8 M172 76 q8 0 8 8 M160 76 q-6 2 -4 10"/></g>
+                <g class="m m-happy" fill="#ffd65a"><path d="M188 70 l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z"/><path d="M40 90 l3 6 6 .8-4.5 4 1.4 6-5.9-3.4-5.9 3.4 1.4-6-4.5-4 6-.8z"/></g>
+              </svg>
+            </div>
+          </div>
+          <div class="room-desk"></div>
+          <div class="flash" id="flash"></div>
+        </div>
+
+        <article class="exam" id="exam" aria-live="polite">
+          <div class="exam-head"><span class="qno" id="q-no">문제 1</span><span class="rule-tag" id="q-rule">AI를 바르게 쓰는 법</span></div>
+          <h2 id="q-text"></h2>
+          <div class="hint-box hidden" id="hint-box"><svg width="24" height="24" style="flex:none" aria-hidden="true"><use href="#i-hint"/></svg><span id="hint-text"></span></div>
+          <div class="answers" id="answers"></div>
+          <div class="feedback hidden" id="feedback">
+            <h3 id="fb-title"></h3>
+            <p id="fb-why"></p>
+            <div class="tip"><svg width="22" height="22" style="flex:none" aria-hidden="true"><use href="#i-book"/></svg><span id="fb-tip"></span></div>
+            <button class="btn btn-primary" id="fb-next" type="button">다음 문제 →</button>
+          </div>
+        </article>
+      </div>
+
+      <aside class="card shelf" aria-labelledby="shelf-title">
+        <h2 id="shelf-title">책상 옆 선반</h2>
+        <p class="sub">산 아이템을 눌러 사용하세요. (한 번씩만 쓸 수 있어요)</p>
+        <div class="shelf-items" id="shelf-items"></div>
+        <p class="shelf-status" id="shelf-status" aria-live="polite"></p>
+        <div class="shelf-board" id="shelf-board"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 5. 결과 -->
+  <section id="s-end" class="hidden">
+    <div class="card ending" id="ending">
+      <div id="win-block" class="hidden">
+        <div class="win-scene" id="win-scene"></div>
+        <h2 class="end-title">승리! 밖에서 놀 시간이에요</h2>
+        <p class="end-lead">AI를 바르게 쓰는 법을 배우고 400元을 모았어요!<br>집 밖으로 달려 나가 친구들과 신나게 놀아요.</p>
+      </div>
+      <div id="lose-block" class="hidden">
+        <svg class="lose-art" viewBox="0 0 260 220" aria-hidden="true">
+          <circle cx="130" cy="110" r="100" fill="#ffe3dc"/>
+          <g transform="translate(70 30)"><path d="M10 70 C2 24,118 24,110 70 L114 130 C96 140,24 140,6 130Z" fill="#3b2722"/><circle cx="60" cy="10" r="16" fill="#3b2722"/><ellipse cx="60" cy="74" rx="46" ry="50" fill="#f2b48f"/><path d="M14 66 C14 30,46 18,62 20 C90 22,108 40,106 70 C90 52,74 46,60 48 C44 50,28 56,14 66Z" fill="#3b2722"/><path d="M26 56 L48 66 M94 56 L72 66" stroke="#3b2722" stroke-width="6" stroke-linecap="round"/><ellipse cx="42" cy="78" rx="10" ry="9" fill="#fff" stroke="#2b2a3a" stroke-width="3"/><ellipse cx="78" cy="78" rx="10" ry="9" fill="#fff" stroke="#2b2a3a" stroke-width="3"/><circle cx="44" cy="80" r="3.5" fill="#e4573d"/><circle cx="76" cy="80" r="3.5" fill="#e4573d"/><path d="M38 100 Q60 90 82 100 Q84 124 60 126 Q36 124 38 100Z" fill="#8a2b2b"/></g>
+          <text x="40" y="60" font-family="Jua, sans-serif" font-size="30" fill="#e4573d" transform="rotate(-14 40 60)">이놈!</text>
+        </svg>
+        <h2 class="end-title" style="color:var(--red)">게임 오버</h2>
+        <p class="end-lead">당신은 HP가 부족해 죽었습니다.<br>게임을 다시 시작해 복습하세요. 행운을 빕니다.</p>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="recap">
+        <h3>오늘 배운 AI 약속</h3>
+        <ol id="recap-list"></ol>
+      </div>
+      <div class="end-actions">
+        <button class="btn btn-red" id="restart" type="button">처음부터 다시 시작</button>
+        <button class="btn btn-light" id="end-credits" type="button">만든 사람·출처</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 만든 사람·출처 -->
+  <section id="s-credits" class="hidden">
+    <div class="card panel">
+      <h2>만든 사람·출처</h2>
+      <p class="sub">우리 게임도 저작권을 지켜요! 게임에 쓴 그림·소리·글의 출처를 모두 밝혀요.</p>
+      <h3 class="credit-sec">버전 1 <small>수제 요공르트 팀 · 캔바 코드로 만든 첫 게임</small></h3>
+      <dl class="credit-list">
+        <div class="credit-row"><dt>만든 사람</dt><dd>ㅇㅈㅇ, ㅊㄱㅎ, ㄱㅅㄱ, ㅎㅇㅈ</dd></div>
+        <div class="credit-row"><dt>그림</dt><dd>캐릭터: 네이버, 캔바 AI</dd></div>
+        <div class="credit-row"><dt>소리·음악</dt><dd>없음</dd></div>
+        <div class="credit-row"><dt>글·자료</dt><dd>모둠원, 캔바 AI, 네이버</dd></div>
+        <div class="credit-row"><dt>도움 받은 도구</dt><dd>캔바 AI (캔바 코드)</dd></div>
+      </dl>
+      <h3 class="credit-sec">버전 2 <small>선생님과 함께 다듬은 버전</small></h3>
+      <dl class="credit-list">
+        <div class="credit-row"><dt>게임 기획·문제</dt><dd>수제 요공르트 팀 (팀 기획서와 버그 공략집 내용을 그대로 반영)</dd></div>
+        <div class="credit-row"><dt>그림·효과음</dt><dd>Claude Code(AI)가 코드로 직접 그림 · 효과음도 코드로 만듦</dd></div>
+        <div class="credit-row"><dt>글꼴</dt><dd>주아(Jua), 고운돋움(Gowun Dodum) · SIL 오픈 폰트 라이선스</dd></div>
+        <div class="credit-row"><dt>도움 받은 도구</dt><dd>캔바 코드, Claude Code</dd></div>
+      </dl>
+      <div class="panel-actions">
+        <button class="btn btn-light" id="credits-back" type="button">돌아가기</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 상점 -->
+<div class="modal hidden" id="shop" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+  <div class="card">
+    <div class="shop-head">
+      <div><h2 id="shop-title">책상 옆 상점</h2><p style="margin:4px 0 0;color:var(--ink-soft)">산 아이템은 책상 옆 선반에서 사용해요.</p></div>
+      <button class="chip-btn" id="shop-close" type="button">닫기 ✕</button>
+    </div>
+    <div class="wallet"><svg width="26" height="26" aria-hidden="true"><use href="#i-coin"/></svg><span id="shop-money">0 元</span></div>
+    <div class="shop-grid" id="shop-grid"></div>
+    <p class="shop-status" id="shop-status" aria-live="polite"></p>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+
+/* ---------- 데이터: 책 속 약속 ---------- */
+const PROMISES = [
+  {k:'밝히기', t:'AI가 만든 글이나 그림을 사용할 때는 AI의 도움을 받았다는 사실을 솔직하게 밝혀요.'},
+  {k:'확인하기', t:'AI도 틀릴 수 있어요. 중요한 정보는 믿을 만한 자료로 확인하고 스스로 판단해요.'},
+  {k:'지키기', t:'비밀번호, 집 주소, 전화번호, 친구 사진 같은 개인정보는 AI에게 말하지 않아요.'},
+  {k:'존중하기', t:'다른 사람을 놀리거나 속이는 데 AI를 쓰지 않아요. 다른 사람의 권리를 존중하고, AI의 답에 편견이 없는지도 살펴봐요.'},
+  {k:'맡기기', t:'AI에게는 아이디어 찾기, 글 요약, 번역 초안, 맞춤법 검사처럼 나를 돕는 일을 맡겨요. 결과는 반드시 내가 확인해요.'},
+  {k:'책임지기', t:'AI는 내 생각을 돕는 도구예요. 최종 판단과 책임은 AI를 사용한 나에게 있어요. 정직하고 안전하게, 서로 존중하며 사용해요.'}
+];
+const CIRCLED = ['①','②','③','④','⑤','⑥'];
+
+/* ---------- 데이터: 엄마의 시험 문제 (수제 요공르트 팀) ---------- */
+const QUESTIONS = [
+  {q:"AI가 만든 초안을 고쳐 숙제로 제출할 때 가장 책임 있는 방법은 무엇일까요?",a:["문장 몇 개만 바꾸고 전부 내 글이라고 해요.","AI 도움을 밝히고 사실과 출처를 확인한 뒤 내 생각으로 다시 써요.","AI에게 더 그럴듯하게 바꿔 달라고 한 뒤 그대로 제출해요.","친구가 검토했으니 AI 사용 사실은 숨겨도 돼요."],c:1,r:0,hint:"사용 사실뿐 아니라 내용과 출처도 확인해요.",why:"AI 도움을 밝히고 사실·출처를 검토한 뒤 자신의 이해와 생각으로 작성해야 해요."},
+  {q:"발표 준비에 AI를 활용할 때 맡겨도 되지만 반드시 내가 검토해야 하는 일은 무엇일까요?",a:["친구의 사생활을 바탕으로 평가하기","주제에 대한 여러 관점과 아이디어를 제안받기","근거 없는 통계를 사실처럼 확정하기","완성된 발표를 이해하지 않고 그대로 읽기"],c:1,r:4,hint:"AI는 선택지를 넓혀 주지만 판단을 대신하지 않아요.",why:"아이디어와 관점을 제안받을 수는 있지만 사실 확인과 최종 판단은 내가 해야 해요."},
+  {q:"AI가 제시한 그럴듯한 통계로 발표하려는데 출처 링크가 열리지 않을 때 가장 좋은 행동은 무엇일까요?",a:["수치가 그럴듯하니 그대로 사용해요.","출처를 비슷하게 만들어 적어요.","다른 신뢰할 만한 자료로 수치를 교차 확인하고 확인되지 않으면 빼요.","AI에게 같은 질문을 반복해 같은 답을 얻어요."],c:2,r:1,hint:"출처가 확인되지 않는 숫자는 특히 조심해요.",why:"출처를 독립적인 신뢰 자료와 교차 확인하고 검증할 수 없으면 사용하지 않아야 해요."},
+  {q:"AI에게 학교 과제 도움을 요청할 때 안전하게 바꿔 입력한 사례는 무엇일까요?",a:["친구의 이름·사진과 고민 내용","내 비밀번호와 집 주소","등장인물 이름을 가명으로 바꾼 일반적인 줄거리","선생님의 전화번호와 학급 명단"],c:2,r:2,hint:"사람을 특정할 수 있는 정보는 빼요.",why:"개인정보와 다른 사람의 사연은 제외하고, 필요한 일반 정보만 가명으로 바꿔 입력해야 해요."},
+  {q:"AI에게 맡기기 전에 내가 먼저 해야 할 일은?",a:["목적과 필요한 내용을 정해요.","아무 말이나 입력해요.","결과를 무조건 믿어요.","친구 정보를 넣어요."],c:0,r:4,hint:"무엇을 도와달라는지 분명히 해요.",why:"목적을 정하고 필요한 정보만 안전하게 제공해야 해요."},
+  {q:"친구를 놀리는 가짜 사진을 만들자는 제안을 받았다면?",a:["재미있으니 공유해요.","친구에게만 보내요.","이름을 숨기고 만들어요.","거절하고 친구의 권리를 존중해요."],c:3,r:3,hint:"다른 사람이 상처받을 수 있어요.",why:"AI로 누군가를 속이거나 괴롭히면 안 돼요."},
+  {q:"AI 그림을 발표 자료에 쓸 때 좋은 행동은?",a:["내가 직접 그렸다고 해요.","AI로 만들었다고 밝히고 사용 규칙을 확인해요.","작가 이름을 마음대로 붙여요.","몰래 가져와요."],c:1,r:0,hint:"어떻게 만들어졌는지 솔직하게 말해요.",why:"AI 사용 사실과 이미지 사용 규칙을 확인해야 해요."},
+  {q:"AI 답변에 편견이 담겨 있다면?",a:["그대로 따라 말해요.","모두에게 공유해요.","편견을 의심하고 공정한 정보를 찾아요.","친구에게 보여 주며 웃어요."],c:2,r:3,hint:"AI의 말도 항상 공정하지는 않아요.",why:"여러 관점을 살피고 사람을 존중하는 정보를 찾아야 해요."},
+  {q:"AI가 만든 답을 공부에 활용하는 방법은?",a:["설명을 참고하고 스스로 이해해요.","답만 베껴요.","틀린 답도 외워요.","생각을 모두 맡겨요."],c:0,r:5,hint:"AI는 내 생각을 대신하지 않아요.",why:"설명을 참고한 뒤 스스로 생각하고 풀어야 해요."},
+  {q:"AI에게 말해도 괜찮은 정보는?",a:["비밀번호","집 열쇠 위치","좋아하는 책의 주제","주민등록번호"],c:2,r:2,hint:"나를 특정하지 않는 내용을 골라요.",why:"개인정보 대신 일반적인 주제와 관심사를 말하는 것이 안전해요."},
+  {q:"AI에게 맡기면 안 되는 판단은?",a:["문장 맞춤법 검사","친구의 감정과 인생을 대신 결정하기","발표 제목 아이디어","긴 글 요약"],c:1,r:5,hint:"사람의 마음과 중요한 결정은 사람이 살펴야 해요.",why:"AI는 사람의 감정이나 중요한 결정을 대신할 수 없어요."},
+  {q:"AI 답변을 다른 사람에게 보내기 전에는?",a:["사실과 표현을 확인해요.","무조건 빨리 보내요.","이름을 붙여 퍼뜨려요.","틀려도 재미있으면 보내요."],c:0,r:1,hint:"공유 전 한 번 더 읽어 봐요.",why:"오정보나 상처 주는 표현이 없는지 확인해야 해요."},
+  {q:"친구 사진을 AI로 만화처럼 바꾸어 학급 발표에 쓰고 싶다면 가장 먼저 할 일은 무엇일까요?",a:["이름만 가리고 바로 업로드해요.","친한 친구니까 허락 없이 사용해요.","친구에게 사용 목적과 공개 범위를 설명하고 동의를 받아요.","발표가 끝난 뒤에만 알리면 돼요."],c:2,r:2,hint:"사진을 어디에 어떻게 쓸지도 알려야 해요.",why:"사진 속 사람에게 사용 목적과 공개 범위를 알리고 먼저 동의를 받아야 해요."},
+  {q:"AI에게 글을 써 달라고 할 때 가장 좋은 방법은?",a:["대상과 목적을 설명해요.","개인정보를 모두 넣어요.","결과를 수정하지 않아요.","남의 글을 그대로 복사해요."],c:0,r:4,hint:"누가 읽고 어떤 목적의 글인지 알려 주세요.",why:"목적과 독자를 알려 주면 더 알맞은 초안을 얻을 수 있어요."},
+  {q:"AI로 번역한 문서를 사용할 때는?",a:["중요한 내용도 확인 없이 사용해요.","뜻이 맞는지 다시 읽어요.","틀려도 그대로 제출해요.","친구에게 검토를 맡기지 않아요."],c:1,r:4,hint:"번역도 실수할 수 있어요.",why:"번역 결과의 의미와 표현을 직접 확인해야 해요."},
+  {q:"AI가 진짜 사람처럼 말하는 음성을 들었다면?",a:["무조건 믿어요.","허락 없이 친구 목소리를 흉내 내요.","출처를 확인하고 조심해서 공유해요.","바로 퍼뜨려요."],c:2,r:1,hint:"듣기만 해서는 진짜인지 모를 수 있어요.",why:"출처를 확인하고 다른 사람의 목소리를 허락 없이 사용하지 않아요."},
+  {q:"AI에게 건강이나 안전에 관한 조언을 받았다면?",a:["AI 답만 따라요.","믿을 만한 어른이나 전문가에게 다시 물어요.","친구에게 처방해요.","인터넷에 바로 올려요."],c:1,r:1,hint:"중요한 문제는 사람에게 확인해요.",why:"건강과 안전 문제는 보호자나 전문가의 도움을 받아야 해요."},
+  {q:"AI가 만든 결과를 내 작품이라고만 말하면 안 되는 이유는?",a:["AI 도움을 숨기는 것은 정직하지 않기 때문이에요.","AI는 항상 틀리기 때문이에요.","작품을 보여 주면 안 되기 때문이에요.","컴퓨터를 쓰면 안 되기 때문이에요."],c:0,r:0,hint:"사용 방법을 솔직하게 밝혀요.",why:"AI를 어떻게 활용했는지 정직하게 알려야 해요."},
+  {q:"AI를 사용할 때 가장 중요한 태도는?",a:["빠르면 무엇이든 믿기","정직하고 안전하게 사용하기","남보다 먼저 공유하기","생각하지 않기"],c:1,r:5,hint:"정직, 안전, 존중을 기억해요.",why:"AI는 정직하고 안전하며 다른 사람을 존중하는 방향으로 사용해야 해요."},
+  {q:"AI의 도움을 받은 뒤 최종 책임은 누구에게 있을까요?",a:["AI에게만 있어요.","인터넷에 있어요.","사용하고 발표한 사람에게 있어요.","아무에게도 없어요."],c:2,r:5,hint:"결과를 사용한 사람이 마지막으로 확인해요.",why:"AI를 사용한 사람은 결과를 검토하고 그 내용에 책임을 져야 해요."}
+];
+
+const ITEMS = {
+  food:  {name:'음식',          price:15, icon:'i-food',   desc:'HP 20 회복'},
+  shield:{name:'방패',          price:10, icon:'i-shield', desc:'다음 오답 때 HP가 줄지 않아요'},
+  double:{name:'용돈 2배',      price:30, icon:'i-double', desc:'다음 정답 용돈 2배'},
+  hint:  {name:'힌트',          price:5,  icon:'i-hint',   desc:'지금 문제의 힌트 보기'},
+  erase: {name:'엄마 기억 삭제', price:20, icon:'i-erase',  desc:'다음에 틀려도 엄마가 깜빡하고 용돈을 줘요'}
+};
+const WIN_PRICE = 400, REWARD = 25, COMBO_BONUS = 10, WRONG_DMG = 10, STUDY_SEC = 5, REVIEW_SEC = 4;
+
+/* ---------- 소리 (Web Audio로 직접 만든 효과음) ---------- */
+const Sound = (() => {
+  let ctx = null, on = true;
+  try { on = localStorage.getItem('mom-sound') !== 'off'; } catch (e) {}
+  const ac = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === 'suspended') ctx.resume(); return ctx; };
+  function tone(freq, start, dur, type = 'triangle', vol = .18, slide) {
+    const c = ac(); if (!c) return;
+    const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + start;
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .02);
+  }
+  const fx = {
+    click(){ tone(660,0,.06,'square',.06); },
+    correct(){ [523,659,784].forEach((f,i)=>tone(f,i*.08,.22)); },
+    combo(){ [784,988,1175,1568].forEach((f,i)=>tone(f,i*.07,.2,'square',.08)); },
+    wrong(){ tone(220,0,.35,'sawtooth',.12,110); tone(160,.05,.4,'square',.06,90); },
+    coin(){ tone(988,0,.08,'square',.07); tone(1319,.08,.18,'square',.07); },
+    door(){ tone(110,0,.18,'sine',.3,60); tone(90,.2,.18,'sine',.3,50); },
+    shout(){ tone(300,0,.25,'sawtooth',.1,500); tone(500,.2,.3,'sawtooth',.1,250); },
+    buy(){ [659,880].forEach((f,i)=>tone(f,i*.09,.16,'square',.07)); },
+    use(){ tone(440,0,.12,'sine',.15,880); },
+    win(){ [523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,i*.13,.25,'triangle',.18)); },
+    lose(){ [392,330,262,196].forEach((f,i)=>tone(f,i*.22,.35,'triangle',.16)); }
+  };
+  return {
+    play(n){ if (on && fx[n]) try { fx[n](); } catch (e) {} },
+    get on(){ return on; },
+    toggle(){ on = !on; try { localStorage.setItem('mom-sound', on ? 'on' : 'off'); } catch (e) {} if (on) ac(); return on; }
+  };
+})();
+
+/* ---------- 상태 ---------- */
+let S;
+function freshState(){
+  return {hp:100, money:0, combo:0, bestCombo:0, correct:0, wrong:0, asked:0,
+    inv:{food:0,shield:0,double:0,hint:0,erase:0}, buff:{shield:false,double:false,erase:false},
+    deck:[], round:1, cur:null, order:[], answered:false, hintShown:false, over:false, start:Date.now(),
+    studyTimer:null, reviewRule:null, momTimer:null};
+}
+const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* ---------- 화면 전환 ---------- */
+const SCREENS = ['title','howto','study','game','end','credits'];
+let creditsBack = 'title';
+function show(name){
+  SCREENS.forEach(s => $('s-' + s).classList.toggle('hidden', s !== name));
+  $('home-btn').classList.toggle('hidden', name === 'title');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------- 책 ---------- */
+function renderBook(highlight){
+  const make = i => `<div class="promise${highlight === i ? ' highlight' : ''}" id="promise-${i}"><span class="num">${i+1}</span><span><b>${PROMISES[i].k}</b>${PROMISES[i].t}</span></div>`;
+  $('promises-left').innerHTML = [0,1,2].map(make).join('');
+  $('promises-right').innerHTML = [3,4,5].map(make).join('');
+}
+function runTimer(sec, done){
+  clearInterval(S.studyTimer);
+  const bar = $('study-timer'), t0 = Date.now();
+  bar.style.width = '0%';
+  S.studyTimer = setInterval(() => {
+    const p = Math.min(1, (Date.now() - t0) / (sec * 1000));
+    bar.style.width = (p * 100) + '%';
+    if (p >= 1) { clearInterval(S.studyTimer); done(); }
+  }, 60);
+}
+function startStudy(){
+  S.reviewRule = null;
+  renderBook(null);
+  $('review-bubble').classList.add('hidden');
+  $('study-tag').textContent = '내 시점 · 책상 위에 펼쳐진 책';
+  $('study-next').classList.remove('hidden'); $('study-next').disabled = true;
+  $('review-next').classList.add('hidden');
+  show('study');
+  runTimer(STUDY_SEC, () => { $('study-next').disabled = false; $('study-next').focus(); });
+}
+function startReview(rule){
+  S.reviewRule = rule;
+  renderBook(rule);
+  $('review-text').textContent = `엄마: 틀렸잖아! 책 ${CIRCLED[rule]}번 ‘${PROMISES[rule].k}’를 다시 읽어!`;
+  $('review-bubble').classList.remove('hidden');
+  $('study-tag').textContent = '복습 시간 · 형광펜 부분을 다시 읽어요';
+  $('study-next').classList.add('hidden');
+  $('review-next').classList.remove('hidden'); $('review-next').disabled = true;
+  show('study');
+  setTimeout(() => { const el = $('promise-' + rule); if (el) el.scrollIntoView({block:'center', behavior:'smooth'}); }, 250);
+  runTimer(REVIEW_SEC, () => { $('review-next').disabled = false; $('review-next').focus(); });
+}
+
+/* ---------- 엄마 ---------- */
+function setMood(m){ $('mom').dataset.mood = m; }
+function say(text, kind){
+  const sp = $('speech');
+  sp.className = 'speech' + (kind ? ' ' + kind : '');
+  sp.textContent = text;
+  void sp.offsetWidth; sp.style.animation = '';
+}
+function momAnim(cls){
+  const w = $('mom-wrap');
+  w.classList.remove('enter','shake','hop'); void w.offsetWidth; w.classList.add(cls);
+}
+function momEnters(){
+  const room = $('room');
+  room.classList.add('door-open'); Sound.play('door');
+  setMood('angry'); $('speech').classList.add('hidden');
+  momAnim('enter');
+  setTimeout(() => { say('공부 다 했지? 시험 본다!', 'angry'); room.classList.remove('door-open'); }, 700);
+  setTimeout(() => { setMood('calm'); }, 1700);
+}
+function floatText(text, color){
+  const room = $('room'), el = document.createElement('div');
+  el.className = 'float-txt'; el.textContent = text; el.style.color = color;
+  el.style.left = (40 + Math.random() * 20) + '%'; el.style.top = '40%';
+  room.appendChild(el); setTimeout(() => el.remove(), 1300);
+}
+
+/* ---------- 시험 ---------- */
+function nextQuestion(){
+  if (!S.deck.length) { S.deck = shuffle(QUESTIONS.map((_, i) => i)); if (S.asked) S.round++; }
+  S.cur = S.deck.shift();
+  S.order = shuffle([0,1,2,3]);
+  S.answered = false; S.hintShown = false; S.asked++;
+  renderQuestion();
+}
+function renderQuestion(){
+  const q = QUESTIONS[S.cur];
+  $('q-no').textContent = `문제 ${S.asked}` + (S.round > 1 ? ` · ${S.round}회차` : '');
+  $('q-rule').textContent = `AI를 바르게 쓰는 법 · 약속 ${CIRCLED[q.r]}`;
+  $('q-text').textContent = q.q;
+  $('hint-box').classList.add('hidden');
+  $('feedback').classList.add('hidden');
+  const box = $('answers'); box.replaceChildren();
+  S.order.forEach((orig, pos) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'answer'; b.dataset.orig = orig;
+    b.innerHTML = `<span class="n">${pos+1}</span><span></span>`;
+    b.lastChild.textContent = q.a[orig];
+    b.addEventListener('click', () => answer(orig));
+    box.appendChild(b);
+  });
+  updateHUD();
+}
+function answer(orig){
+  if (S.answered || S.over) return;
+  S.answered = true;
+  const q = QUESTIONS[S.cur], ok = orig === q.c;
+  [...$('answers').children].forEach(b => {
+    const o = +b.dataset.orig; b.disabled = true;
+    if (o === q.c) b.classList.add('correct'); else if (o === orig) b.classList.add('wrong'); else b.classList.add('dim');
+  });
+  const fb = $('feedback'), next = $('fb-next');
+  const rightPos = S.order.indexOf(q.c) + 1;
+  $('fb-tip').textContent = `기억할 약속 ${CIRCLED[q.r]} ${PROMISES[q.r].k} — ${PROMISES[q.r].t}`;
+  if (ok) {
+    S.correct++; S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo);
+    const doubled = S.buff.double; S.buff.double = false;
+    let reward = REWARD * (doubled ? 2 : 1), bonus = 0;
+    if (S.combo % 3 === 0) bonus = COMBO_BONUS;
+    S.money += reward + bonus;
+    fb.className = 'feedback good';
+    $('fb-title').textContent = bonus ? `정답! ${S.combo}연속 정답 보너스까지!` : '정답!';
+    $('fb-why').textContent = q.why + ` 용돈 ${reward}元${doubled ? '(2배!)' : ''}${bonus ? ` + 보너스 ${bonus}元` : ''}을 받았어요.`;
+    next.textContent = '다음 문제 →'; next.dataset.act = 'next';
+    setMood('happy'); momAnim('hop');
+    say(bonus ? `${S.combo}개 연속! 우리 애 최고야!` : (doubled ? '오늘은 특별히 용돈 두 배야!' : `잘했어! 용돈 ${reward}元!`), 'happy');
+    floatText(`+${reward + bonus}元`, '#c98a0c');
+    Sound.play(bonus ? 'combo' : 'correct'); setTimeout(() => Sound.play('coin'), 250);
+  } else {
+    S.wrong++; S.combo = 0;
+    const pos = Math.min(3, S.deck.length); S.deck.splice(pos, 0, S.cur);
+    let msg = `정답은 ${rightPos}번이에요. ` + q.why;
+    let title = '아쉬워요!';
+    if (S.buff.erase) {
+      S.buff.erase = false; S.money += REWARD;
+      msg += ` 엄마 기억 삭제 아이템 덕분에 엄마가 깜빡하고 용돈 ${REWARD}元을 줬어요.`;
+      floatText(`+${REWARD}元`, '#c98a0c');
+    }
+    if (S.buff.shield) {
+      S.buff.shield = false;
+      title = '아쉬워요! 방패가 막았어요';
+      msg += ' 방패가 HP를 지켜 줬어요.';
+      setMood('angry'); momAnim('shake'); say('방패 뒤에 숨어도 다 보여!', 'angry');
+    } else {
+      S.hp = Math.max(0, S.hp - WRONG_DMG);
+      setMood('furious'); momAnim('shake'); say(S.hp <= 0 ? '이노옴~! 오늘 게임은 끝이야!' : '이놈! 공부 제대로 안 했지?!', 'angry');
+      const f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+      const pc = $('play-col'); pc.classList.remove('screen-shake'); void pc.offsetWidth; pc.classList.add('screen-shake');
+      floatText(`HP −${WRONG_DMG}`, '#e4573d');
+      Sound.play('shout');
+    }
+    Sound.play('wrong');
+    fb.className = 'feedback bad';
+    $('fb-title').textContent = title;
+    $('fb-why').textContent = msg;
+    if (S.hp <= 0) { next.textContent = '결과 보기'; next.dataset.act = 'lose'; }
+    else { next.textContent = `📖 책 ${CIRCLED[q.r]}번 복습하러 가기`; next.dataset.act = 'review'; }
+  }
+  fb.classList.remove('hidden');
+  updateHUD();
+  setTimeout(() => { fb.scrollIntoView({block:'nearest', behavior:'smooth'}); next.focus({preventScroll:true}); }, 120);
+}
+$('fb-next').addEventListener('click', () => {
+  const act = $('fb-next').dataset.act; Sound.play('click');
+  if (act === 'lose') return end(false);
+  if (act === 'review') return startReview(QUESTIONS[S.cur].r);
+  setMood('calm'); $('speech').classList.add('hidden');
+  nextQuestion();
+  $('exam').scrollIntoView({block:'nearest', behavior:'smooth'});
+});
+
+/* ---------- HUD · 선반 ---------- */
+function updateHUD(){
+  $('hp-val').textContent = `${S.hp} / 100`;
+  $('hp-bar').style.width = S.hp + '%';
+  $('money-val').textContent = `${S.money} 元`;
+  $('goal-bar').style.width = Math.min(100, S.money / WIN_PRICE * 100) + '%';
+  $('combo-val').textContent = S.combo ? `${S.combo}연속` : '0';
+  const buffs = [];
+  if (S.buff.shield) buffs.push('🛡️ 방패 준비');
+  if (S.buff.double) buffs.push('✨ 용돈 2배 준비');
+  if (S.buff.erase) buffs.push('🧽 엄마 기억 삭제 준비');
+  $('buffs').innerHTML = buffs.map(b => `<span class="buff">${b}</span>`).join('');
+  renderShelf(); renderShop();
+}
+function renderShelf(){
+  const wrap = $('shelf-items');
+  if (!wrap.children.length) {
+    Object.entries(ITEMS).forEach(([key, it]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'item-btn'; b.id = 'use-' + key;
+      b.innerHTML = `<span class="ic"><svg width="32" height="32"><use href="#${it.icon}"/></svg></span><span><span class="nm">${it.name}</span><span class="ds">${it.desc}</span></span><span class="cnt"></span>`;
+      b.addEventListener('click', () => useItem(key));
+      wrap.appendChild(b);
+    });
+  }
+  Object.keys(ITEMS).forEach(key => {
+    const b = $('use-' + key), n = S.inv[key];
+    b.querySelector('.cnt').textContent = '×' + n;
+    b.disabled = n === 0 || S.over ||
+      (key === 'food' && S.hp >= 100) || (key === 'shield' && S.buff.shield) ||
+      (key === 'double' && S.buff.double) || (key === 'erase' && S.buff.erase) ||
+      (key === 'hint' && (S.answered || S.hintShown));
+  });
+  $('shelf-board').innerHTML = `맞힌 문제 <b>${S.correct}</b> · 틀린 문제 <b>${S.wrong}</b><br>최고 연속 정답 <b>${S.bestCombo}</b>`;
+}
+function useItem(key){
+  if (S.over || S.inv[key] < 1) return;
+  const st = $('shelf-status');
+  if (key === 'food') { if (S.hp >= 100) return; S.hp = Math.min(100, S.hp + 20); st.textContent = '냠냠! 음식을 먹고 HP를 20 회복했어요.'; floatText('HP +20', '#2f9466'); }
+  if (key === 'shield') { if (S.buff.shield) return; S.buff.shield = true; st.textContent = '방패 준비 완료! 다음 오답에도 HP가 줄지 않아요.'; }
+  if (key === 'double') { if (S.buff.double) return; S.buff.double = true; st.textContent = '다음 정답의 용돈이 2배가 돼요!'; }
+  if (key === 'erase') { if (S.buff.erase) return; S.buff.erase = true; st.textContent = '엄마 기억 삭제 준비! 다음에 틀려도 용돈을 받아요.'; }
+  if (key === 'hint') {
+    if (S.answered || S.hintShown) return;
+    S.hintShown = true; $('hint-text').textContent = '힌트: ' + QUESTIONS[S.cur].hint;
+    $('hint-box').classList.remove('hidden'); st.textContent = '시험지에 힌트가 나타났어요!';
+  }
+  S.inv[key]--; Sound.play('use'); updateHUD();
+}
+
+/* ---------- 상점 ---------- */
+function renderShop(){
+  const grid = $('shop-grid');
+  if (!grid.children.length) {
+    const all = {...ITEMS, win:{name:'승리', price:WIN_PRICE, icon:'i-win', desc:'400元으로 승리를 사면 밖에 나가 놀 수 있어요!'}};
+    Object.entries(all).forEach(([key, it]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'shop-item' + (key === 'win' ? ' win' : ''); b.dataset.buy = key;
+      b.innerHTML = `<span class="row"><span class="ic"><svg width="36" height="36"><use href="#${it.icon}"/></svg></span><span class="nm">${it.name}</span><span class="price">${it.price}元</span></span><span class="ds">${it.desc}</span>`;
+      b.addEventListener('click', () => buy(key));
+      grid.appendChild(b);
+    });
+  }
+  $('shop-money').textContent = `${S.money} 元`;
+  grid.querySelectorAll('[data-buy]').forEach(b => {
+    const key = b.dataset.buy, price = key === 'win' ? WIN_PRICE : ITEMS[key].price;
+    b.disabled = S.money < price || S.over;
+  });
+}
+function buy(key){
+  const price = key === 'win' ? WIN_PRICE : ITEMS[key].price;
+  if (S.over || S.money < price) return;
+  S.money -= price;
+  if (key === 'win') { closeShop(true); return end(true); }
+  S.inv[key]++; Sound.play('buy');
+  $('shop-status').textContent = `${ITEMS[key].name} 구매 완료! 책상 옆 선반에서 사용하세요.`;
+  updateHUD();
+}
+function openShop(){ if (S.over) return; $('shop-status').textContent = ''; renderShop(); $('shop').classList.remove('hidden'); $('shop-close').focus(); Sound.play('click'); }
+function closeShop(silent){ $('shop').classList.add('hidden'); if (!silent) $('shop-open').focus(); }
+$('shop-open').addEventListener('click', openShop);
+$('shop-close').addEventListener('click', () => closeShop());
+$('shop').addEventListener('click', e => { if (e.target === $('shop')) closeShop(); });
+
+/* ---------- 결과 ---------- */
+const WIN_SVG = `
+<svg viewBox="0 0 1000 480" role="img" aria-label="햇살 아래 집 밖으로 달려 나가 친구들과 노는 장면">
+ <defs>
+  <linearGradient id="wsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cc4f0"/><stop offset="1" stop-color="#d8f3ff"/></linearGradient>
+  <linearGradient id="wgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd27f"/><stop offset="1" stop-color="#5fb25e"/></linearGradient>
+ </defs>
+ <rect width="1000" height="480" fill="url(#wsky)"/>
+ <g transform="translate(870 90)"><g class="sun-rays">${Array.from({length:12},(_,i)=>`<rect x="-4" y="-86" width="8" height="26" rx="4" fill="#ffd65a" transform="rotate(${i*30})"/>`).join('')}</g><circle r="50" fill="#ffd65a"/><circle r="40" fill="#ffe57a"/><path d="M-16 6 q16 16 32 0" stroke="#e48b2a" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="-14" cy="-8" r="5" fill="#e48b2a"/><circle cx="14" cy="-8" r="5" fill="#e48b2a"/></g>
+ <g class="cloud-move"><g fill="#fff"><ellipse cx="200" cy="80" rx="60" ry="22"/><ellipse cx="240" cy="66" rx="40" ry="26"/><ellipse cx="170" cy="70" rx="30" ry="18"/></g></g>
+ <g class="cloud-move" style="animation-duration:20s"><g fill="#fff" opacity=".9"><ellipse cx="560" cy="60" rx="50" ry="18"/><ellipse cx="590" cy="48" rx="34" ry="22"/></g></g>
+ <path d="M0 320 Q200 240 420 300 T 1000 280 V480 H0Z" fill="#a8dc95"/>
+ <path d="M0 360 Q260 320 520 350 T 1000 340 V480 H0Z" fill="url(#wgr)"/>
+ <!-- 집 -->
+ <g>
+  <rect x="40" y="200" width="230" height="170" fill="#f8e2bf"/>
+  <path d="M20 210 L155 110 L290 210Z" fill="#d0583f"/><path d="M20 210 L155 110 L290 210" fill="none" stroke="#a83a26" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="210" y="130" width="28" height="50" fill="#a83a26"/>
+  <rect x="62" y="236" width="70" height="60" rx="6" fill="#bfe8ff" stroke="#fffaf0" stroke-width="6"/>
+  <g transform="translate(97 280)"><circle cy="-16" r="13" fill="#3b2722"/><circle cy="-8" r="13" fill="#f2b48f"/><path d="M-5 -10 q5 6 10 0" stroke="#8a2b2b" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="-4" cy="-13" r="1.8" fill="#2b2a3a"/><circle cx="4" cy="-13" r="1.8" fill="#2b2a3a"/><rect x="-12" y="4" width="24" height="12" rx="5" fill="#5f7f8c"/><rect class="wave-arm" x="10" y="-14" width="7" height="20" rx="3.5" fill="#f2b48f"/></g>
+  <rect x="170" y="268" width="66" height="102" fill="#3a2418"/>
+  <path d="M170 268 L140 280 L140 380 L170 370Z" fill="#c47a48"/>
+  <rect x="160" y="366" width="86" height="10" fill="#c9965f"/>
+ </g>
+ <path d="M205 376 C320 400 420 420 560 420 L620 430" stroke="#e8d3a6" stroke-width="34" fill="none" stroke-linecap="round"/>
+ <!-- 나무 -->
+ <g><rect x="468" y="250" width="24" height="110" fill="#7d4628"/><circle cx="480" cy="230" r="62" fill="#4f9a55"/><circle cx="440" cy="250" r="38" fill="#5fb25e"/><circle cx="520" cy="250" r="40" fill="#5fb25e"/><circle cx="462" cy="214" r="8" fill="#e4573d"/><circle cx="506" cy="238" r="8" fill="#e4573d"/></g>
+ <!-- 그네 -->
+ <g><path d="M640 400 L670 300 L730 300 L760 400" stroke="#e4573d" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="660" y="294" width="80" height="12" rx="6" fill="#c0402a"/>
+  <g class="swing"><path d="M686 300 V376 M714 300 V376" stroke="#2b2a3a" stroke-width="3"/><rect x="680" y="372" width="40" height="9" rx="4" fill="#3d7fb8"/>
+   <g transform="translate(700 350)"><circle cy="-14" r="11" fill="#2b2a3a"/><circle cy="-8" r="10" fill="#f2c7a4"/><rect x="-10" y="2" width="20" height="20" rx="6" fill="#ff9fb2"/><path d="M-3 -6 q3 3 6 0" stroke="#8a2b2b" stroke-width="2" fill="none"/></g></g></g>
+ <!-- 미끄럼틀 -->
+ <g><rect x="850" y="290" width="10" height="110" fill="#3d7fb8"/><rect x="890" y="290" width="10" height="110" fill="#3d7fb8"/><path d="M850 300 H900" stroke="#3d7fb8" stroke-width="8"/><path d="M855 330 H895 M855 360 H895" stroke="#3d7fb8" stroke-width="6"/><path d="M900 290 C930 300 950 360 990 400" stroke="#f2b632" stroke-width="16" fill="none" stroke-linecap="round"/><rect x="842" y="280" width="66" height="14" rx="4" fill="#2f9466"/></g>
+ <!-- 친구 -->
+ <g transform="translate(800 400)"><circle cy="-58" r="14" fill="#5a3a22"/><circle cy="-50" r="13" fill="#f2c7a4"/><circle cx="-4" cy="-52" r="1.8" fill="#2b2a3a"/><circle cx="4" cy="-52" r="1.8" fill="#2b2a3a"/><path d="M-5 -45 q5 4 10 0" stroke="#8a2b2b" stroke-width="2" fill="none"/><rect x="-12" y="-38" width="24" height="26" rx="7" fill="#2f9466"/><rect x="-11" y="-14" width="8" height="18" rx="3" fill="#2b2a3a"/><rect x="3" y="-14" width="8" height="18" rx="3" fill="#2b2a3a"/><rect class="wave-arm" x="10" y="-56" width="7" height="22" rx="3.5" fill="#f2c7a4"/></g>
+ <!-- 공 -->
+ <g class="ball"><circle cx="618" cy="408" r="16" fill="#fff" stroke="#2b2a3a" stroke-width="3"/><path d="M604 404 q14 -8 28 0 M608 416 q10 6 20 0" stroke="#e4573d" stroke-width="3" fill="none"/></g>
+ <!-- 나비 -->
+ <g class="bfly-a"><g transform="translate(360 200)"><ellipse class="flutter" cx="-6" cy="0" rx="8" ry="10" fill="#ff9fb2"/><ellipse class="flutter" cx="6" cy="0" rx="8" ry="10" fill="#ffb7c6"/><rect x="-1.5" y="-8" width="3" height="16" rx="1.5" fill="#2b2a3a"/></g></g>
+ <g class="bfly-b"><g transform="translate(640 180)"><ellipse class="flutter" cx="-6" cy="0" rx="8" ry="10" fill="#ffd65a"/><ellipse class="flutter" cx="6" cy="0" rx="8" ry="10" fill="#ffe57a"/><rect x="-1.5" y="-8" width="3" height="16" rx="1.5" fill="#2b2a3a"/></g></g>
+ <!-- 꽃 -->
+ ${[[300,440],[360,455],[700,450],[760,440],[930,452],[120,450],[40,440]].map(([x,y],i)=>`<g transform="translate(${x} ${y})"><path d="M0 0 V14" stroke="#2f7a3e" stroke-width="3"/><circle r="7" fill="${['#ff9fb2','#ffd65a','#fff','#e4573d'][i%4]}"/><circle r="3" fill="#f2b632"/></g>`).join('')}
+ <!-- 주인공: 문에서 달려 나옴 -->
+ <g>
+  <animateMotion dur="3.4s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".3 .1 .4 1" path="M200 370 C320 395 430 412 552 405"/>
+  <g transform="translate(0 -6)">
+   <rect class="leg-a" x="-9" y="-6" width="8" height="24" rx="4" fill="#2b2a3a"/>
+   <rect class="leg-b" x="1" y="-6" width="8" height="24" rx="4" fill="#2b2a3a"/>
+   <rect x="-14" y="-38" width="28" height="34" rx="9" fill="#f2b632"/>
+   <text x="0" y="-16" text-anchor="middle" font-family="Jua, sans-serif" font-size="11" fill="#7d4628">AI</text>
+   <rect class="leg-b" x="-20" y="-36" width="8" height="22" rx="4" fill="#f2c7a4"/>
+   <rect class="leg-a" x="12" y="-36" width="8" height="22" rx="4" fill="#f2c7a4"/>
+   <circle cy="-54" r="17" fill="#f2c7a4"/>
+   <path d="M-17 -56 C-18 -76 18 -76 17 -56 C10 -66 -8 -66 -17 -56Z" fill="#3b2722"/>
+   <circle cx="-6" cy="-54" r="2.4" fill="#2b2a3a"/><circle cx="6" cy="-54" r="2.4" fill="#2b2a3a"/>
+   <path d="M-7 -46 Q0 -38 7 -46Z" fill="#8a2b2b"/>
+   <ellipse cx="-11" cy="-48" rx="4" ry="2.5" fill="#f08a7a" opacity=".6"/><ellipse cx="11" cy="-48" rx="4" ry="2.5" fill="#f08a7a" opacity=".6"/>
+  </g>
+ </g>
+ <text x="330" y="190" font-family="Jua, sans-serif" font-size="34" fill="#fff" stroke="#2b2a3a" stroke-width="6" paint-order="stroke">신난다~!</text>
+</svg>`;
+function confetti(){
+  const host = $('ending'), colors = ['#e4573d','#f2b632','#2f9466','#3d7fb8','#ff9fb2'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('i'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%'; c.style.background = colors[i % colors.length];
+    c.style.animationDuration = (2.6 + Math.random() * 2.4) + 's'; c.style.animationDelay = (Math.random() * 1.2) + 's';
+    c.style.transform = `rotate(${Math.random()*180}deg)`;
+    host.appendChild(c); setTimeout(() => c.remove(), 6500);
+  }
+}
+function end(won){
+  S.over = true; clearInterval(S.studyTimer); closeShop(true);
+  $('win-block').classList.toggle('hidden', !won);
+  $('lose-block').classList.toggle('hidden', won);
+  const sec = Math.round((Date.now() - S.start) / 1000);
+  const total = S.correct + S.wrong;
+  $('stats').innerHTML = [
+    [S.correct, '맞힌 문제'], [S.wrong, '틀린 문제'],
+    [total ? Math.round(S.correct / total * 100) + '%' : '-', '정답률'],
+    [`${Math.floor(sec/60)}분 ${sec%60}초`, '플레이 시간']
+  ].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('');
+  $('recap-list').innerHTML = PROMISES.map(p => `<li><b>${p.k}</b> — ${p.t}</li>`).join('');
+  show('end');
+  if (won) {
+    $('win-scene').innerHTML = WIN_SVG;
+    const svg = $('win-scene').querySelector('svg'); try { svg.setCurrentTime(0); } catch (e) {}
+    Sound.play('win'); confetti();
+  } else Sound.play('lose');
+}
+
+/* ---------- 흐름 ---------- */
+function newGame(){
+  if (S) clearInterval(S.studyTimer);
+  S = freshState();
+  $('shelf-status').textContent = '';
+  setMood('calm'); $('speech').classList.add('hidden');
+  updateHUD();
+  startStudy();
+}
+function enterExam(){
+  show('game');
+  momEnters();
+  nextQuestion();
+}
+$('btn-start').addEventListener('click', () => { Sound.play('click'); newGame(); });
+$('howto-start').addEventListener('click', () => { Sound.play('click'); newGame(); });
+$('btn-howto').addEventListener('click', () => { Sound.play('click'); show('howto'); });
+$('btn-credits').addEventListener('click', () => { creditsBack = 'title'; show('credits'); });
+$('end-credits').addEventListener('click', () => { creditsBack = 'end'; show('credits'); });
+$('credits-back').addEventListener('click', () => show(creditsBack));
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+$('study-next').addEventListener('click', () => { if (!$('study-next').disabled) { Sound.play('click'); enterExam(); } });
+$('review-next').addEventListener('click', () => {
+  if ($('review-next').disabled) return;
+  Sound.play('click'); show('game');
+  setMood('calm'); say('이번엔 잘 풀어 봐!', '');
+  nextQuestion();
+});
+$('restart').addEventListener('click', () => { Sound.play('click'); newGame(); });
+$('home-btn').addEventListener('click', () => {
+  if (S && !S.over && !$('s-game').classList.contains('hidden') && !confirm('처음 화면으로 갈까요? 지금 게임은 사라져요.')) return;
+  if (S) { clearInterval(S.studyTimer); S.over = true; }
+  closeShop(true); show('title');
+});
+function paintSound(){
+  const b = $('sound-btn');
+  b.setAttribute('aria-pressed', Sound.on);
+  b.innerHTML = `<svg width="18" height="18"><use href="#${Sound.on ? 'i-sound' : 'i-mute'}"/></svg><span class="t">${Sound.on ? '소리 켜짐' : '소리 꺼짐'}</span>`;
+}
+$('sound-btn').addEventListener('click', () => { Sound.toggle(); paintSound(); Sound.play('click'); });
+paintSound();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('shop').classList.contains('hidden')) return closeShop();
+  if ($('s-game').classList.contains('hidden') || !$('shop').classList.contains('hidden') || !S || S.over) return;
+  if (!S.answered && ['1','2','3','4'].includes(e.key)) { const b = $('answers').children[+e.key - 1]; if (b) b.click(); }
+});
+
+S = freshState();
+renderBook(null);
+updateHUD();
+})();
+</script>
+</body>
+</html>

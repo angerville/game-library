@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>숲속 퀘스트 · 저작권 출처 모험</title>
+<meta name="description" content="숲속 오두막 30곳을 돌며 저작권·출처 문제 20개를 풀면 모험 성공! (ㄱㅎㅂ, ㅊㅅㅇ, ㅇㅅㅇ 팀)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23143d31'/%3E%3Cpath d='M32 8 L50 34 H40 L54 54 H10 L24 34 H14Z' fill='%234f9a55'/%3E%3Crect x='28' y='50' width='8' height='8' fill='%237d4628'/%3E%3Ccircle cx='48' cy='14' r='6' fill='%23f8cb65'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/fonts.css">
+<style>
+:root{
+  --pine:#143d31; --dark:#0f2a22; --cream:#fff9e9; --cream-2:#f3ead2; --gold:#f8cb65; --gold-2:#e2a93a;
+  --leaf:#4f9a55; --leaf-soft:#e3f1dc; --red:#d9573f; --red-soft:#ffe1d8; --blue:#3d7fb8; --ink:#1d2a24; --ink-soft:#4d6157;
+  --font-title:'Jua','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  --font-body:'Gowun Dodum','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--pine)}
+body{font-family:var(--font-body);color:var(--ink);-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+button:disabled{cursor:not-allowed;opacity:.5}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.hidden{display:none!important}
+#scene{position:fixed;inset:0;touch-action:none}
+#scene canvas{display:block;width:100%;height:100%}
+
+/* ---------- 공용 ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:13px 22px;font-family:var(--font-title);font-size:19px;transition:transform .12s,box-shadow .12s,filter .12s}
+.btn-gold{background:var(--gold);color:var(--pine);box-shadow:0 5px 0 #b9852a}
+.btn-pine{background:var(--pine);color:#fff;box-shadow:0 5px 0 #071a14}
+.btn-cream{background:var(--cream);color:var(--pine);box-shadow:0 5px 0 #c9b98f}
+.btn:hover:not(:disabled){filter:brightness(1.07)}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #0003}
+.glass{background:rgba(15,42,34,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.paper{background:var(--cream);border-radius:26px;box-shadow:0 24px 70px rgba(3,24,14,.45)}
+.title-font{font-family:var(--font-title);font-weight:400}
+
+/* ---------- 시작 화면 ---------- */
+.overlay{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+#start{background:radial-gradient(ellipse at 50% 30%,rgba(15,42,34,.25),rgba(10,30,24,.82))}
+.start-card{width:100%;max-width:980px;padding:28px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin:auto}
+.start-card .eyebrow{color:#9a6a25;font-size:13px;letter-spacing:.2em;font-weight:700}
+.start-card h1{font-family:var(--font-title);font-weight:400;font-size:clamp(38px,5.4vw,60px);line-height:1.05;margin:6px 0 10px;color:var(--pine)}
+.start-card .lead{font-size:17px;line-height:1.7;margin:0 0 16px;color:var(--ink-soft)}
+.howto{background:#fff;border-radius:18px;padding:14px 16px;margin-bottom:14px}
+.howto h2{font-family:var(--font-title);font-weight:400;font-size:21px;margin:0 0 8px;color:var(--pine)}
+.howto ol{margin:0;padding-left:20px;line-height:1.75;font-size:15px}
+.howto kbd{font-family:inherit;background:var(--cream-2);border-radius:6px;padding:1px 7px;border:1px solid #d9caa3;font-weight:700}
+.source-box{display:flex;align-items:center;gap:10px;background:var(--leaf-soft);border-radius:14px;padding:10px 14px;font-weight:700}
+.source-box small{font-weight:400;color:var(--ink-soft)}
+.char-pick h2{font-family:var(--font-title);font-weight:400;font-size:24px;margin:0 0 10px;color:var(--pine)}
+.chars{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.char{background:#fff;border:4px solid #e3d6b3;border-radius:20px;padding:12px 10px 14px;text-align:center;transition:transform .12s,border-color .15s}
+.char:hover{transform:translateY(-3px)}
+.char[aria-pressed="true"]{border-color:var(--gold-2);background:#fff7df;box-shadow:0 0 0 4px #f8cb6566}
+.char svg{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
+.char b{display:block;font-family:var(--font-title);font-weight:400;font-size:22px;margin-top:4px}
+.char span{font-size:13px;color:var(--ink-soft)}
+.start-go{margin-top:16px;width:100%;font-size:22px;padding:16px}
+.team{margin-top:12px;font-size:13px;color:var(--ink-soft);text-align:center}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;z-index:10;pointer-events:none}
+.hud > *{pointer-events:auto}
+#hud-left{top:12px;left:12px;display:flex;flex-direction:column;gap:8px;max-width:min(330px,calc(100vw - 200px))}
+.status{border-radius:18px;padding:10px 14px}
+.status .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.who{display:flex;align-items:center;gap:8px;font-family:var(--font-title);font-size:18px}
+.who i{width:30px;height:30px;border-radius:50%;display:inline-block;border:2px solid #fff}
+.hearts{display:flex;gap:2px}
+.hearts svg{width:22px;height:22px}
+.hearts svg.lost{opacity:.28;filter:grayscale(1)}
+.hearts.hit{animation:hit .5s}
+@keyframes hit{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.coins{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:var(--pine);border-radius:999px;padding:3px 11px;font-family:var(--font-title);font-size:17px}
+.coins.pop{animation:cpop .4s}
+@keyframes cpop{50%{transform:scale(1.18)}}
+.progress{margin-top:8px}
+.progress .lbl{display:flex;justify-content:space-between;font-size:13px;opacity:.9}
+.progress .bar{height:10px;background:#ffffff26;border-radius:99px;overflow:hidden;margin-top:3px}
+.progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#9be07a,var(--gold));border-radius:99px;transition:width .6s}
+.missions{border-radius:18px;padding:10px 14px;font-size:14px}
+.missions summary{cursor:pointer;font-family:var(--font-title);font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.missions summary::-webkit-details-marker{display:none}
+.missions summary::after{content:"▾";opacity:.7}
+.missions[open] summary::after{content:"▴"}
+.missions ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:5px}
+.missions li{display:flex;gap:8px;align-items:flex-start;line-height:1.4}
+.missions li .mk{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #ffffffa0;display:grid;place-items:center;font-size:11px;margin-top:1px}
+.missions li.done{opacity:.6}
+.missions li.done .mk{background:#9be07a;border-color:#9be07a;color:var(--pine)}
+.buffs{display:flex;gap:6px;flex-wrap:wrap}
+.buff{background:#ffffff22;border:1px solid #ffffff44;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700}
+
+#hud-right{top:12px;right:12px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.minimap-wrap{border-radius:18px;padding:6px;position:relative}
+#minimap{display:block;width:170px;height:170px;border-radius:13px;cursor:pointer}
+.minimap-wrap .n{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:var(--font-title);font-size:12px;color:#fff;text-shadow:0 1px 2px #000}
+.tool-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tool{border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px;display:inline-flex;gap:5px;align-items:center}
+
+#hud-top{top:12px;left:50%;transform:translateX(-50%);text-align:center}
+.place{border-radius:999px;padding:7px 16px;font-weight:700;font-size:15px;white-space:nowrap}
+.place b{color:var(--gold)}
+
+#hud-bottom{left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 16px max(16px,env(safe-area-inset-bottom))}
+.joy{width:124px;height:124px;border-radius:50%;position:relative;border:2px solid #ffffffa6;background:radial-gradient(circle at 35% 25%,#668678,#18392f 70%);box-shadow:inset 0 8px 18px #071b17a8,0 10px 22px #071b1799;touch-action:none;cursor:grab}
+.joy::before{content:"";position:absolute;inset:14px;border:1px dashed #ffffff55;border-radius:50%}
+.knob{position:absolute;left:40px;top:40px;width:44px;height:44px;border-radius:50%;border:3px solid var(--cream);background:radial-gradient(circle at 30% 25%,#ffe9a8,#e9aa45 75%);box-shadow:0 7px 13px #071b1788;pointer-events:none}
+.joy-lbl{display:block;text-align:center;color:#fff;font-size:12px;margin-top:4px;text-shadow:0 1px 3px #000}
+.actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:60vw}
+.act-btn{min-height:58px;border-radius:20px;border:3px solid #fff;padding:10px 20px;font-family:var(--font-title);font-size:20px;background:var(--gold);color:var(--pine);box-shadow:0 6px 0 #b9852a,0 12px 26px #0006;animation:actIn .25s}
+@keyframes actIn{from{transform:scale(.7);opacity:0}}
+.act-btn .key{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--pine);color:#fff;font-size:13px;margin-left:6px;vertical-align:middle}
+.crop-pick{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.crop-pick button{background:var(--cream);color:var(--pine);border:3px solid #fff;border-radius:14px;padding:7px 12px;font-weight:700;box-shadow:0 4px 0 #0003}
+.crop-pick button[aria-pressed="true"]{background:var(--gold);border-color:var(--pine)}
+
+#toast{position:fixed;z-index:30;left:50%;top:64px;transform:translateX(-50%);max-width:min(560px,90vw);border-radius:16px;padding:11px 18px;font-weight:700;font-size:16px;text-align:center;pointer-events:none;transition:opacity .3s,transform .3s;opacity:0}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(6px)}
+.float-coin{position:fixed;z-index:31;font-family:var(--font-title);font-size:26px;color:var(--gold);text-shadow:0 2px 0 var(--pine),0 0 8px #000;pointer-events:none;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{to{transform:translateY(-60px);opacity:0}}
+.hit-flash{position:fixed;inset:0;z-index:35;pointer-events:none;background:radial-gradient(circle,transparent 40%,rgba(217,87,63,.55));opacity:0}
+.hit-flash.on{animation:hf .6s}
+@keyframes hf{0%{opacity:1}100%{opacity:0}}
+
+/* ---------- 오두막 퀴즈 ---------- */
+.room-bg{position:fixed;inset:0;z-index:20;overflow:auto;padding:16px;display:flex;align-items:center;justify-content:center;
+  background:
+   linear-gradient(transparent 70%, #6b4a34 70%),
+   repeating-linear-gradient(90deg,#a87b52 0 64px,#9a6f47 64px 66px);
+}
+.room-bg::before{content:"";position:fixed;left:6%;top:8%;width:180px;height:140px;border:10px solid #f3e1bd;border-radius:10px;background:linear-gradient(#9fd6f0,#d9f3ff 60%,#7cc27f 60%);box-shadow:inset 0 0 0 4px #e6cfa0;opacity:.95}
+.room-bg::after{content:"";position:fixed;right:6%;top:10%;width:120px;height:160px;border-radius:8px;background:repeating-linear-gradient(#7d4628 0 6px,#5c3a24 6px 40px);opacity:.9}
+.quiz{position:relative;z-index:1;width:100%;max-width:640px;padding:24px 26px;margin:auto}
+.quiz-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.quiz-head h2{font-family:var(--font-title);font-weight:400;font-size:28px;margin:0;color:var(--pine)}
+.quiz-head .meta{font-size:14px;color:var(--ink-soft);background:#fff;border-radius:999px;padding:5px 12px}
+.quiz .q{font-size:clamp(18px,2.4vw,22px);font-weight:700;line-height:1.55;margin:10px 0 14px}
+.quiz .src-card{display:flex;gap:12px;align-items:center;background:#fff;border:2px dashed #cdbb8f;border-radius:16px;padding:10px 12px;margin:-4px 0 14px}
+.quiz .src-card svg{flex:none;width:96px;height:72px;border-radius:10px}
+.quiz .src-card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px}
+.quiz .src-card dt{color:var(--ink-soft)}
+.quiz .src-card dd{margin:0;font-weight:700}
+.choices{display:grid;gap:9px}
+.choice{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:3px solid #e3d6b3;border-radius:16px;padding:12px 14px;font-size:16px;font-weight:700;line-height:1.5;transition:border-color .15s,transform .12s,background .15s}
+.choice .l{flex:none;width:28px;height:28px;border-radius:50%;background:var(--cream-2);display:grid;place-items:center;font-family:var(--font-title)}
+.choice:hover:not(:disabled){border-color:var(--pine);transform:translateY(-2px)}
+.choice:disabled{opacity:1;cursor:default}
+.choice.right{background:#dff3e3;border-color:#2f9466}
+.choice.right .l{background:#2f9466;color:#fff}
+.choice.wrong{background:var(--red-soft);border-color:var(--red);opacity:.75}
+.choice.wrong .l{background:var(--red);color:#fff}
+.choice.gone{opacity:.35;text-decoration:line-through}
+.fb{margin-top:14px;border-radius:16px;padding:14px 16px;animation:actIn .25s}
+.fb.good{background:#dff3e3;border:3px solid #2f9466}
+.fb.bad{background:var(--red-soft);border:3px solid var(--red)}
+.fb h3{margin:0 0 4px;font-family:var(--font-title);font-weight:400;font-size:23px}
+.fb.good h3{color:#1f7a4f}.fb.bad h3{color:#b23e29}
+.fb p{margin:0 0 4px;line-height:1.65}
+.fb .tip{background:#ffffffb8;border-radius:12px;padding:8px 12px;margin-top:6px;font-size:15px}
+.quiz-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:16px}
+
+/* ---------- 상점 ---------- */
+.shop-bg{position:fixed;inset:0;z-index:20;overflow:auto;padding:16px;display:flex;background:linear-gradient(140deg,#315a48,#153a31 55%,#72543b)}
+.shop{width:100%;max-width:720px;padding:24px;margin:auto}
+.shop-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.shop-top h2{font-family:var(--font-title);font-weight:400;font-size:30px;margin:0;color:var(--pine)}
+.shop-top p{margin:4px 0 0;color:var(--ink-soft)}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.item{display:flex;flex-direction:column;gap:6px;text-align:left;background:#fff;border:3px solid #e3d6b3;border-radius:18px;padding:12px 14px;transition:transform .12s,border-color .15s}
+.item:hover:not(:disabled){border-color:var(--pine);transform:translateY(-2px)}
+.item .top{display:flex;align-items:center;gap:10px}
+.item .ic{width:46px;height:46px;border-radius:14px;background:var(--leaf-soft);display:grid;place-items:center;font-size:26px;flex:none}
+.item .nm{font-family:var(--font-title);font-size:20px}
+.item .pr{margin-left:auto;font-family:var(--font-title);font-size:18px;color:#9a6a25;white-space:nowrap}
+.item .ds{font-size:14px;color:var(--ink-soft);line-height:1.5}
+.item .own{font-size:12px;font-weight:700;color:#1f7a4f}
+.shop-msg{min-height:24px;margin-top:12px;font-weight:700}
+.check{margin-top:16px;background:#fff7df;border:3px solid var(--gold-2);border-radius:18px;padding:16px;animation:actIn .25s}
+.check h3{margin:0 0 4px;font-family:var(--font-title);font-weight:400;font-size:22px;color:#8a5a12}
+
+/* ---------- 큰 지도 ---------- */
+#bigmap{background:rgba(6,22,17,.82);z-index:25}
+.map-card{padding:18px;width:100%;max-width:820px;margin:auto}
+.map-card .head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.map-card h2{font-family:var(--font-title);font-weight:400;font-size:26px;margin:0;color:var(--pine)}
+.map-body{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:14px;align-items:start}
+#bigmap-canvas{width:100%;aspect-ratio:1/1;border-radius:16px;display:block;background:#6a9a58}
+.legend{display:grid;gap:6px;font-size:14px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend i{width:16px;height:16px;border-radius:5px;display:inline-block;flex:none}
+.travel{display:grid;gap:6px;margin-top:10px}
+.travel b{font-family:var(--font-title);font-weight:400;font-size:17px}
+.travel button{background:#fff;border:2px solid #e3d6b3;border-radius:12px;padding:7px 10px;text-align:left;font-weight:700;font-size:14px}
+.travel button:hover{border-color:var(--pine)}
+
+/* ---------- 결과 ---------- */
+#ending{background:rgba(6,22,17,.86);z-index:45}
+.end-card{width:100%;max-width:760px;padding:26px;margin:auto;position:relative;overflow:hidden}
+.end-card h2{font-family:var(--font-title);font-weight:400;font-size:clamp(30px,5vw,46px);margin:4px 0 6px;text-align:center;color:var(--pine)}
+.end-card .lead{text-align:center;color:var(--ink-soft);font-size:17px;line-height:1.6;margin:0 0 16px}
+.trophy{display:block;width:120px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stats div{background:#fff;border-radius:14px;padding:10px;text-align:center}
+.stats b{display:block;font-family:var(--font-title);font-weight:400;font-size:24px;color:var(--pine)}
+.stats span{font-size:12px;color:var(--ink-soft)}
+.learned{background:var(--leaf-soft);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.learned h3,.credits h3{font-family:var(--font-title);font-weight:400;font-size:21px;margin:0 0 6px;color:var(--pine)}
+.learned ol{margin:0;padding-left:20px;line-height:1.75}
+.credits{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px}
+.credits dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:16px}
+.credits dt{font-weight:700;color:var(--ink-soft)}
+.credits dd{margin:0;font-weight:700}
+.credits .v2{margin:10px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.6;border-top:1px dashed #d9caa3;padding-top:8px}
+.end-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.confetti{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(1100px) rotate(720deg)}}
+
+@media (max-width:820px){
+  .start-card{grid-template-columns:1fr;padding:20px}
+  .map-body{grid-template-columns:1fr}
+  .shop-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  #minimap{width:112px;height:112px}
+  #hud-left{max-width:calc(100vw - 150px)}
+  .status{padding:8px 10px}
+  .who{font-size:15px}
+  .hearts svg{width:18px;height:18px}
+  .missions{display:none}
+  .place{font-size:13px;padding:6px 12px}
+  #hud-top{top:auto;bottom:160px}
+  .joy{width:104px;height:104px}
+  .knob{left:31px;top:31px;width:40px;height:40px}
+  .act-btn{font-size:17px;min-height:52px;padding:8px 14px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .quiz{padding:18px 16px}
+  .room-bg::before,.room-bg::after{display:none}
+  .tool .t{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="heart" viewBox="0 0 48 48"><path d="M24 42 C10 32 4 24 4 16 C4 9 10 5 15 5 C19 5 22 7 24 11 C26 7 29 5 33 5 C38 5 44 9 44 16 C44 24 38 32 24 42 Z" fill="#e4573d" stroke="#fff" stroke-width="3"/><path d="M12 14 q2 -4 6 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></symbol>
+</defs></svg>
+
+<div id="scene" aria-label="3D 숲속 마을: 오두막 30채, 큰 상점, 연못, 꽃밭, 텃밭, 말·자동차·자전거가 있어요" role="img"></div>
+<div class="hit-flash" id="hit-flash"></div>
+
+<!-- HUD -->
+<div class="hud hidden" id="hud-left">
+  <div class="glass status">
+    <div class="row">
+      <span class="who"><i id="who-dot"></i><span id="who-name">스티븐</span></span>
+      <span class="hearts" id="hearts" aria-label="하트"></span>
+      <span class="coins" id="coins" aria-live="polite">🪙 0</span>
+    </div>
+    <div class="progress">
+      <div class="lbl"><span>해결한 오두막</span><b id="prog-txt">0 / 20</b></div>
+      <div class="bar"><i id="prog-bar"></i></div>
+    </div>
+    <div class="buffs" id="buffs" style="margin-top:6px"></div>
+  </div>
+  <details class="glass missions" id="missions" open>
+    <summary>🧭 오늘의 미션</summary>
+    <ul id="mission-list"></ul>
+  </details>
+</div>
+<div class="hud hidden" id="hud-right">
+  <div class="glass minimap-wrap"><canvas id="minimap" width="340" height="340" aria-label="작은 지도. 누르면 큰 지도가 열려요" role="button" tabindex="0"></canvas><span class="n">N</span></div>
+  <div class="tool-row">
+    <button class="glass tool" id="btn-map" type="button">🗺️ <span class="t">큰 지도</span> <kbd style="font:inherit;opacity:.7">M</kbd></button>
+    <button class="glass tool" id="btn-music" type="button">🎵 <span class="t" id="music-t">음악 켜짐</span></button>
+    <button class="glass tool" id="btn-sound" type="button">🔊 <span class="t" id="sound-t">효과음 켜짐</span></button>
+  </div>
+</div>
+<div class="hud hidden" id="hud-top"><div class="glass place">📍 <b id="place-name">숲속 광장</b> · <span id="place-hint">자유롭게 둘러보세요</span></div></div>
+<div class="hud hidden" id="hud-bottom">
+  <div><div class="joy" id="joy" role="group" aria-label="이동 조이스틱"><div class="knob" id="knob"></div></div><span class="joy-lbl">이동 · WASD/방향키</span></div>
+  <div class="actions">
+    <div class="crop-pick hidden" id="crop-pick" aria-label="수확할 작물 선택">
+      <button type="button" data-crop="strawberry" aria-pressed="false">🍓 딸기</button>
+      <button type="button" data-crop="watermelon" aria-pressed="false">🍉 수박</button>
+      <button type="button" data-crop="melon" aria-pressed="false">🍈 멜론</button>
+    </div>
+    <button class="act-btn hidden" id="act" type="button"></button>
+  </div>
+</div>
+<div class="glass" id="toast" role="status" aria-live="polite"></div>
+
+<!-- 시작 화면 -->
+<div class="overlay" id="start">
+  <div class="paper start-card">
+    <div>
+      <div class="eyebrow">FOREST QUEST · 저작권 출처 모험</div>
+      <h1>숲속 퀘스트<br>어드벤처</h1>
+      <p class="lead">숲속 마을 곳곳에 <b>오두막 30채</b>가 숨어 있어요. 오두막마다 서로 다른 <b>저작권·출처 문제</b>가 하나씩! <b>20문제</b>를 풀면 모험 성공이에요.</p>
+      <div class="howto">
+        <h2>🎮 게임 플레이 방법</h2>
+        <ol>
+          <li><b>이동</b> — 조이스틱 또는 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>·방향키</li>
+          <li><b>상호작용</b> — 가까이 가면 나오는 노란 버튼 또는 <kbd>E</kbd> 키</li>
+          <li><b>오두막</b> — 걸어서 문 앞에 가면 들어갈 수 있어요. 정답이면 코인 5개!</li>
+          <li><b>하트 5개</b> — 틀리면 하트가 1개 줄어요. 모두 잃으면 모험 실패!</li>
+          <li><b>상점</b> — 물건을 사려면 <b>출처 확인 문제</b>를 맞혀야 해요.</li>
+          <li><b>지도</b> — 오른쪽 위 지도 또는 <kbd>M</kbd> 키. 노란 집 = 아직 안 푼 오두막</li>
+          <li><b>탈것</b> — 말·자동차·자전거를 타고 빨리 달려요. (오두막에는 내려서 들어가요)</li>
+        </ol>
+      </div>
+      <div class="source-box">📜 출처: AI캔바 <small>· 그림·소리·글 (버전 2 다듬기: Claude Code)</small></div>
+    </div>
+    <div class="char-pick">
+      <h2>누구와 모험할까요?</h2>
+      <div class="chars">
+        <button class="char" type="button" data-char="steven" aria-pressed="true">
+          <svg viewBox="0 0 160 170" aria-hidden="true"><circle cx="80" cy="88" r="74" fill="#e3f1dc"/><rect x="48" y="104" width="64" height="56" rx="18" fill="#3d7fb8"/><rect x="72" y="104" width="16" height="22" fill="#fff" opacity=".85"/><circle cx="80" cy="74" r="34" fill="#f2c7a4"/><path d="M46 70 C44 38 116 38 114 70 C104 56 60 56 46 70Z" fill="#6b3f22"/><path d="M44 58 C50 30 110 30 116 58 Z" fill="#d9573f"/><rect x="74" y="54" width="62" height="10" rx="5" fill="#b23e29"/><circle cx="68" cy="78" r="4.5" fill="#1d2a24"/><circle cx="92" cy="78" r="4.5" fill="#1d2a24"/><path d="M70 92 Q80 100 90 92" stroke="#8a2b2b" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="6" ry="4" fill="#f08a7a" opacity=".55"/><ellipse cx="100" cy="88" rx="6" ry="4" fill="#f08a7a" opacity=".55"/></svg>
+          <b>스티븐</b><span>모자를 쓴 숲 탐험가</span>
+        </button>
+        <button class="char" type="button" data-char="maria" aria-pressed="false">
+          <svg viewBox="0 0 160 170" aria-hidden="true"><circle cx="80" cy="88" r="74" fill="#fff1c7"/><path d="M44 72 C40 120 50 136 60 140 L100 140 C110 136 120 120 116 72Z" fill="#4a2a1c"/><path d="M50 160 L58 106 H102 L110 160Z" fill="#e4577d"/><rect x="58" y="102" width="44" height="30" rx="12" fill="#f8cb65"/><circle cx="80" cy="74" r="34" fill="#f2c7a4"/><path d="M46 74 C42 36 118 36 114 74 C104 54 62 50 46 74Z" fill="#4a2a1c"/><circle cx="118" cy="56" r="12" fill="#4a2a1c"/><circle cx="110" cy="50" r="6" fill="#e4577d"/><circle cx="68" cy="78" r="4.5" fill="#1d2a24"/><circle cx="92" cy="78" r="4.5" fill="#1d2a24"/><path d="M70 92 Q80 100 90 92" stroke="#8a2b2b" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="60" cy="88" rx="6" ry="4" fill="#f08a7a" opacity=".55"/><ellipse cx="100" cy="88" rx="6" ry="4" fill="#f08a7a" opacity=".55"/></svg>
+          <b>마리아</b><span>꽃을 좋아하는 출처 탐정</span>
+        </button>
+      </div>
+      <button class="btn btn-gold start-go" id="btn-start" type="button">▶ 모험 시작!</button>
+      <p class="team">만든 사람: ㄱㅎㅂ · ㅊㅅㅇ · ㅇㅅㅇ (대련한국국제학교 6학년)</p>
+    </div>
+  </div>
+</div>
+
+<!-- 오두막 퀴즈 -->
+<div class="room-bg hidden" id="cabin" role="dialog" aria-modal="true" aria-labelledby="cabin-title">
+  <div class="paper quiz">
+    <div class="quiz-head"><h2 id="cabin-title">🏡 오두막 1번</h2><span class="meta" id="cabin-meta">해결 0 / 20</span></div>
+    <p class="q" id="cabin-q"></p>
+    <div class="choices" id="cabin-choices"></div>
+    <div class="fb hidden" id="cabin-fb"><h3 id="cabin-fb-t"></h3><p id="cabin-fb-p"></p><div class="tip" id="cabin-fb-tip"></div></div>
+    <div class="quiz-foot">
+      <button class="btn btn-cream" id="btn-lens" type="button">🔍 돋보기 쓰기</button>
+      <button class="btn btn-gold" id="btn-leave" type="button">🚪 오두막 나가기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 상점 -->
+<div class="shop-bg hidden" id="shop" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+  <div class="paper shop">
+    <div class="shop-top">
+      <div><h2 id="shop-title">🛍️ 숲속 큰 상점</h2><p>물건을 사려면 <b>출처 확인 문제</b>를 맞혀야 해요!</p></div>
+      <span class="coins" id="shop-coins" style="font-size:20px;padding:6px 14px">🪙 0</span>
+    </div>
+    <div class="shop-grid" id="shop-grid"></div>
+    <div class="check hidden" id="check">
+      <h3>📜 출처 확인 문제</h3>
+      <p class="q" id="check-q" style="margin:4px 0 10px;font-weight:700;line-height:1.5"></p>
+      <div class="src-card" id="check-card"></div>
+      <div class="choices" id="check-choices"></div>
+    </div>
+    <p class="shop-msg" id="shop-msg" aria-live="polite"></p>
+    <button class="btn btn-gold" id="btn-shop-leave" type="button">↗ 상점 나가기</button>
+  </div>
+</div>
+
+<!-- 큰 지도 -->
+<div class="overlay hidden" id="bigmap" role="dialog" aria-modal="true" aria-labelledby="map-title">
+  <div class="paper map-card">
+    <div class="head"><h2 id="map-title">🗺️ 숲속 마을 지도</h2><button class="btn btn-cream" id="map-close" type="button" style="padding:8px 14px;font-size:16px">닫기 ✕</button></div>
+    <div class="map-body">
+      <canvas id="bigmap-canvas" width="900" height="900"></canvas>
+      <div>
+        <div class="legend">
+          <div><i style="background:#f8cb65"></i>아직 안 푼 오두막</div>
+          <div><i style="background:#3fbf6e"></i>해결한 오두막</div>
+          <div><i style="background:#c9563c"></i>큰 상점</div>
+          <div><i style="background:#6bb7ac"></i>연못 (수영 가능)</div>
+          <div><i style="background:#f3a6c0"></i>야생화 꽃밭 (힌트 종이)</div>
+          <div><i style="background:#8a5a3a"></i>텃밭 (작물 수확)</div>
+          <div><i style="background:#fff;border:2px solid #d9573f"></i>나</div>
+        </div>
+        <div class="travel" id="travel"><b>✨ 빠른 이동</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 -->
+<div class="overlay hidden" id="ending" role="dialog" aria-modal="true" aria-labelledby="end-title">
+  <div class="paper end-card" id="end-card">
+    <svg class="trophy" id="end-art" viewBox="0 0 120 110" aria-hidden="true"></svg>
+    <h2 id="end-title">모험 성공!</h2>
+    <p class="lead" id="end-lead"></p>
+    <div class="stats" id="end-stats"></div>
+    <div class="learned">
+      <h3>📜 오늘 배운 출처 밝히기</h3>
+      <ol>
+        <li>인터넷에 있는 그림·글·음악에도 <b>만든 사람의 저작권</b>이 있어요.</li>
+        <li>쓰기 전에 <b>허락이나 이용 조건(CCL 등)</b>을 확인해요.</li>
+        <li>출처에는 <b>만든 사람 · 작품 이름 · 출처(사이트·링크) · 이용 조건</b>을 적어요.</li>
+        <li>AI로 만든 것도 <b>어떤 AI로 만들었는지</b> 밝혀요.</li>
+      </ol>
+    </div>
+    <div class="credits">
+      <h3>만든 사람·출처</h3>
+      <dl>
+        <dt>만든 사람</dt><dd>ㄱㅎㅂ ㅊㅅㅇ ㅇㅅㅇ</dd>
+        <dt>그림</dt><dd>AI캔바</dd>
+        <dt>소리·음악</dt><dd>배경음악 캔바AI</dd>
+        <dt>글·자료</dt><dd>캔바 AI</dd>
+        <dt>도움받은 도구</dt><dd>캔바코드</dd>
+      </dl>
+      <p class="v2">버전 2 다듬기: 선생님과 Claude Code(AI) — 3D 그림 다시 그리기, 지도, 문제 28개 추가, 효과음 · 글꼴: 주아·고운돋움(SIL OFL) · 3D 엔진: three.js(MIT)</p>
+    </div>
+    <div class="end-actions"><button class="btn btn-gold" id="btn-again" type="button">🔄 다시 모험하기</button></div>
+  </div>
+</div>
+
+<script src="../assets/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+if (!window.THREE) { document.body.insertAdjacentHTML('beforeend','<p style="position:fixed;inset:0;margin:auto;height:2em;text-align:center;color:#fff">3D 엔진을 불러오지 못했어요. 페이지를 새로고침해 주세요.</p>'); return; }
+
+/* =========================================================
+   1. 문제 데이터 (오두막 30곳 · 저작권과 출처)
+   ========================================================= */
+const QUESTIONS = [
+ {q:'다른 사람이 찍은 사진을 게시물에 사용할 때 무엇을 해야 할까요?', a:['인터넷에 있으니 출처 없이 사용한다','사용 허락과 이용 조건을 확인하고 출처를 밝힌다','사진을 자르면 출처를 쓰지 않아도 된다'], c:1,
+  why:'사진의 창작자에게 사용 허락을 받고 이용 조건을 확인한 뒤 출처를 밝히면, 권리를 존중하며 올바르게 사용할 수 있어요.', tip:'인터넷에 공개된 사진도 저작권이 있을 수 있어요.'},
+ {q:'출처를 쓸 때 가장 알맞은 방법은 무엇일까요?', a:['창작자, 작품 이름, 출처 링크와 적용되는 이용 조건을 확인해 적는다','‘인터넷에서 찾음’이라고만 적는다','내 이름만 적는다'], c:0,
+  why:'창작자와 작품 이름, 출처 링크, 이용 조건을 함께 적으면 다른 사람이 출처와 사용 범위를 확인할 수 있어요.', tip:'‘인터넷’, ‘구글’만 적으면 누가 만들었는지 알 수 없어요.'},
+ {q:'저작권은 언제 생길까요?', a:['작품을 만드는 순간 저절로 생긴다','저작권 등록을 해야만 생긴다','작품이 유명해져야 생긴다','작품을 돈 받고 팔아야 생긴다'], c:0,
+  why:'저작권은 작품을 창작하는 순간 저절로 생겨요. 따로 등록하지 않아도 보호받아요.', tip:'내가 쓴 일기, 친구가 그린 낙서도 모두 저작물이에요.'},
+ {q:'초등학생이 직접 그린 그림에도 저작권이 있을까요?', a:['있다. 누구든 직접 창작했다면 저작권이 있다','없다. 어른이 그린 그림만 있다','상을 받은 그림에만 있다'], c:0,
+  why:'나이와 상관없이 직접 창작한 사람에게 저작권이 있어요.', tip:'친구 그림을 쓰고 싶다면 먼저 친구에게 물어봐요.'},
+ {q:'인터넷 검색으로 마음에 드는 그림을 찾았어요. 어떻게 해야 할까요?', a:['검색에 나왔으니 누구나 마음대로 써도 된다','만든 사람이 있으니 이용 조건을 확인한다','그림을 저장하면 내 것이 된다'], c:1,
+  why:'검색에 나오는 그림도 만든 사람이 있어요. 쓸 수 있는지 이용 조건부터 확인해야 해요.', tip:'그림이 올라온 원래 사이트를 찾아 이용 조건을 읽어 봐요.'},
+ {q:'CCL 표시 중 ‘BY(저작자 표시)’는 무슨 뜻일까요?', a:['만든 사람을 꼭 밝혀야 한다','누구도 쓸 수 없다','돈을 받고 팔아도 된다는 뜻만 있다','고치면 안 된다'], c:0,
+  why:'BY는 ‘저작자 표시’예요. 작품을 쓸 때 만든 사람을 꼭 밝혀야 한다는 약속이에요.', tip:'CCL은 만든 사람이 “이 조건만 지키면 써도 돼요”라고 알려 주는 표시예요.'},
+ {q:'CCL ‘NC(비영리)’ 표시가 있는 그림은 어떻게 써야 할까요?', a:['돈을 버는 데 쓰지 않는다','출처를 쓰지 않아도 된다','마음대로 팔아도 된다'], c:0,
+  why:'NC는 ‘비영리’예요. 돈을 버는 목적으로는 쓰면 안 된다는 뜻이에요.', tip:'학교 발표처럼 돈을 벌지 않는 곳에 쓸 때도 출처는 꼭 밝혀요.'},
+ {q:'CCL ‘ND(변경 금지)’ 표시가 있는 그림으로 할 수 없는 일은?', a:['그림 색깔을 바꿔 새 그림으로 만들기','출처를 밝히고 그대로 보여 주기','만든 사람 이름 적기'], c:0,
+  why:'ND는 ‘변경 금지’예요. 원래 모습 그대로만 써야 하고, 고치거나 바꾸면 안 돼요.', tip:'자르기, 색 바꾸기, 글자 넣기도 ‘변경’이에요.'},
+ {q:'자유롭게 쓸 수 있는 저작물을 찾을 수 있는 곳은 어디일까요?', a:['한국저작권위원회의 ‘공유마당’','아무 블로그나 카페','유료 웹툰을 캡처한 사진'], c:0,
+  why:'공유마당에는 이용 조건이 표시된 그림·음악·글꼴 등이 모여 있어요.', tip:'자유 이용 저작물도 이용 조건과 출처 표시는 지켜요.'},
+ {q:'공공기관 누리집 사진에 ‘공공누리’ 표시가 있어요. 어떻게 할까요?', a:['표시된 이용 조건을 확인하고 출처를 밝혀 쓴다','공공기관 것이니 조건 없이 마음대로 쓴다','절대 쓸 수 없다'], c:0,
+  why:'공공누리는 공공기관 저작물을 쓸 수 있는 조건을 알려 주는 표시예요. 유형마다 조건이 달라요.', tip:'공공누리 1유형은 출처만 밝히면 쓸 수 있어요.'},
+ {q:'발표 자료에 출처를 적는 곳으로 알맞은 것은?', a:['자료 바로 아래나 마지막 ‘출처’ 장','아무 데도 적지 않는다','발표가 끝난 뒤 말로만 한다'], c:0,
+  why:'출처는 보는 사람이 확인할 수 있게 자료 바로 아래나 마지막 장에 글로 적어요.', tip:'게임이라면 마지막 ‘만든 사람·출처’ 화면에 적어요.'},
+ {q:'책 내용을 내 글에 인용할 때 밝혀야 할 것은?', a:['책 제목, 지은이, 출판사(쪽수)','책 표지 색깔','책을 읽은 날짜만'], c:0,
+  why:'책 제목과 지은이, 출판사를 밝혀야 읽는 사람이 원래 책을 찾아볼 수 있어요.', tip:'가져온 문장은 따옴표(“ ”)로 묶어 구별해요.'},
+ {q:'다른 사람의 글을 바르게 인용하는 방법은?', a:['내 글이 중심이고, 필요한 부분만 따옴표로 가져와 출처를 밝힌다','남의 글을 대부분 가져오고 내 생각은 조금만 쓴다','출처 없이 내 말처럼 쓴다'], c:0,
+  why:'인용은 필요한 만큼만, 내 글이 주인공이 되게 하고 출처를 꼭 밝혀야 해요.', tip:'긴 글을 통째로 가져오는 것은 인용이 아니에요.'},
+ {q:'친구가 그린 그림을 우리 모둠 게임에 넣고 싶어요. 어떻게 할까요?', a:['친구에게 허락받고 친구 이름을 밝힌다','친한 친구니까 그냥 넣는다','내가 그렸다고 한다'], c:0,
+  why:'친구의 그림도 친구의 저작물이에요. 허락을 받고 만든 사람으로 이름을 밝혀요.', tip:'‘만든 사람·출처’ 화면에 친구 이름을 넣어 줘요.'},
+ {q:'유튜브 영상 속 음악을 내 영상 배경음악으로 쓰려면?', a:['쓸 수 있는 음악인지 이용 허락·조건을 확인한다','몇 초만 쓰면 괜찮다','소리를 작게 하면 괜찮다'], c:0,
+  why:'짧게 쓰거나 소리를 줄여도 허락 없이 쓰면 저작권 침해가 될 수 있어요.', tip:'공유마당이나 무료 음원처럼 이용 조건이 분명한 음악을 골라요.'},
+ {q:'좋아하는 웹툰을 전부 캡처해서 단체 대화방에 올리면?', a:['저작권 침해가 될 수 있다','재미있으니 괜찮다','친구들만 보니 괜찮다'], c:0,
+  why:'웹툰 작가의 허락 없이 퍼뜨리면 작가에게 피해가 가고 저작권 침해가 될 수 있어요.', tip:'친구에게 알려 주고 싶다면 웹툰 링크를 공유해요.'},
+ {q:'영화를 공짜로 받을 수 있는 불법 다운로드 사이트를 발견했어요.', a:['이용하지 않고 정식 서비스를 이용한다','공짜니까 받는다','친구에게도 알려 준다'], c:0,
+  why:'불법 다운로드는 창작자에게 피해를 주고, 나쁜 프로그램이 숨어 있을 수도 있어요.', tip:'정식 서비스를 이용하는 것이 창작자를 응원하는 방법이에요.'},
+ {q:'다른 사람 사진에 필터를 씌우고 잘라서 쓰면 어떻게 될까요?', a:['여전히 원래 작가의 저작물이라 허락과 출처가 필요하다','내 작품이 된다','출처를 안 써도 된다'], c:0,
+  why:'조금 바꿔도 원래 작가의 작품이에요. 허락과 출처가 필요해요.', tip:'바꿔서 쓰는 것을 막는 ‘변경 금지(ND)’ 조건도 확인해요.'},
+ {q:'‘무료 이미지’ 사이트의 그림을 쓸 때도 확인해야 하는 것은?', a:['사이트마다 다른 이용 조건(라이선스)','아무것도 확인할 필요 없다','그림 크기만 확인한다'], c:0,
+  why:'무료라도 출처 표시가 필요하거나 상업적 이용이 안 되는 등 조건이 있을 수 있어요.', tip:'‘무료’와 ‘아무렇게나 써도 됨’은 달라요.'},
+ {q:'AI로 만든 그림을 우리 게임에 넣을 때 출처는 어떻게 적을까요?', a:['어떤 AI 도구로 만들었는지 밝힌다 (예: 그림: AI캔바)','AI 그림은 출처를 안 써도 된다','내가 직접 그렸다고 쓴다'], c:0,
+  why:'AI의 도움을 받았다면 어떤 AI로 만들었는지 솔직하게 밝혀야 해요.', tip:'우리 게임 마지막 화면의 ‘그림: AI캔바’가 바로 그 예시예요!'},
+ {q:'우리나라에서 저작권은 보통 얼마나 보호될까요?', a:['만든 사람이 살아 있는 동안과 세상을 떠난 뒤 70년','딱 1년','영원히 아무도 쓸 수 없다'], c:0,
+  why:'저작권은 만든 사람이 살아 있는 동안과 세상을 떠난 뒤 70년까지 보호돼요.', tip:'보호 기간이 끝난 옛날 작품은 누구나 자유롭게 쓸 수 있어요.'},
+ {q:'재미있는 뉴스 기사를 친구에게 알려 주고 싶어요. 좋은 방법은?', a:['기사 링크를 공유한다','기사 전체를 복사해 내 이름으로 올린다','기사 사진만 잘라 퍼뜨린다'], c:0,
+  why:'링크를 공유하면 기사를 쓴 사람과 언론사의 권리를 지키면서 알려 줄 수 있어요.', tip:'퍼 올리기보다 링크 공유가 안전해요.'},
+ {q:'내가 쓴 블로그 글을 누군가 출처 없이 가져갔어요. 어떻게 할까요?', a:['정중하게 출처 표시나 삭제를 부탁하고, 어른께 도움을 청한다','나도 남의 글을 가져온다','나쁜 댓글을 단다'], c:0,
+  why:'내 저작권도 소중해요. 차분하게 요청하고, 어려우면 보호자나 선생님께 도움을 받아요.', tip:'내가 당해 보면 출처의 소중함을 더 잘 알 수 있어요.'},
+ {q:'무료 글꼴(폰트)을 쓸 때 확인해야 하는 것은?', a:['어디까지 써도 되는지 사용 범위(라이선스)','글꼴의 색깔','아무것도 없다'], c:0,
+  why:'글꼴도 저작물이에요. 무료 글꼴도 쓸 수 있는 범위가 정해져 있어요.', tip:'우리 게임 글꼴(주아, 고운돋움)도 오픈 폰트 라이선스를 확인했어요.'},
+ {q:'좋아하는 연예인 사진을 허락 없이 내 프로필에 쓰면?', a:['사진 찍은 사람의 저작권과 연예인의 초상권 문제가 생길 수 있다','팬이니까 괜찮다','유명한 사람 사진은 공짜다'], c:0,
+  why:'사진에는 찍은 사람의 저작권이, 얼굴에는 그 사람의 초상권이 있어요.', tip:'내가 직접 그린 그림이나 자유 이용 이미지를 써요.'},
+ {q:'게임 화면을 캡처해 학교 발표 자료에 넣을 때 알맞은 출처는?', a:['게임 이름과 만든 회사를 적는다','출처를 안 써도 된다','내가 만든 게임이라고 쓴다'], c:0,
+  why:'게임 화면도 게임 회사의 저작물이에요. 무엇에서 가져왔는지 밝혀요.', tip:'예) “화면: ○○ 게임, △△ 회사”'},
+ {q:'저작권을 지키면 좋은 점은 무엇일까요?', a:['창작자가 존중받고 계속 좋은 작품을 만들 수 있다','아무도 작품을 볼 수 없게 된다','인터넷이 느려진다'], c:0,
+  why:'창작자가 존중받아야 계속 새로운 작품이 나오고, 우리도 더 많은 작품을 즐길 수 있어요.', tip:'출처를 밝히는 건 창작자에게 보내는 “고마워요” 인사예요.'},
+ {q:'다음 중 바른 출처 표기는 무엇일까요?', a:['사진: 김하늘, 「가을 숲」, 공유마당, CC BY','사진: 인터넷','사진: 구글 검색'], c:0,
+  why:'만든 사람, 작품 이름, 출처, 이용 조건이 모두 들어 있어야 바른 출처 표기예요.', tip:'순서: 누가 · 무엇을 · 어디서 · 어떤 조건으로'},
+ {q:'다른 사람의 글을 베껴 내 이름으로 내는 것을 무엇이라고 할까요?', a:['표절','인용','요약'], c:0,
+  why:'남의 생각이나 글을 출처 없이 내 것처럼 쓰는 것을 표절이라고 해요.', tip:'출처를 밝히고 필요한 만큼만 가져오면 ‘인용’이 돼요.'},
+ {q:'출처만 밝히면 어떤 그림이든 마음대로 쓸 수 있을까요?', a:['아니다. 이용 조건이나 허락도 확인해야 한다','그렇다. 출처만 쓰면 다 된다','그렇다. 학교 숙제면 다 된다'], c:0,
+  why:'출처 표시는 기본이에요. 그리고 이용 조건(라이선스)이 허락하는 범위에서만 쓸 수 있어요.', tip:'출처 표시 + 이용 조건 확인, 두 가지를 꼭 함께!'}
+];
+
+/* 상점 출처 확인 카드 */
+const SRC_CARDS = [
+ {kind:'sea',    title:'노을 진 바다', by:'박지우',  site:'공유마당',       lic:'CC BY', type:'사진'},
+ {kind:'mount',  title:'겨울 산',     by:'최민준',  site:'공유마당',       lic:'CC BY-NC', type:'사진'},
+ {kind:'flower', title:'봄 꽃밭',     by:'이하은',  site:'공공누리',       lic:'공공누리 1유형', type:'사진'},
+ {kind:'cat',    title:'졸린 고양이', by:'정서윤',  site:'픽셀숲',         lic:'CC BY-ND', type:'그림'},
+ {kind:'music',  title:'숲속 산책',   by:'한도윤',  site:'공유마당',       lic:'CC BY', type:'음악'},
+ {kind:'star',   title:'별이 빛나는 밤', by:'강서아', site:'우리반 갤러리', lic:'작가 허락 받음', type:'그림'},
+ {kind:'sea',    title:'파도 소리',   by:'윤지호',  site:'공유마당',       lic:'CC BY-SA', type:'소리'},
+ {kind:'mount',  title:'단풍길',      by:'송예린',  site:'공공누리',       lic:'공공누리 1유형', type:'사진'}
+];
+
+const SHOP_ITEMS = {
+  speed:{icon:'👟', name:'가벼운 신발', price:5,  desc:'걷기와 탈것이 35% 빨라져요.', once:true},
+  bonus:{icon:'🍀', name:'행운 주머니', price:8,  desc:'앞으로 얻는 코인이 두 배!', once:true},
+  trail:{icon:'✨', name:'길잡이 표식', price:12, desc:'가장 가까운 안 푼 오두막을 금빛 화살표가 알려 줘요.', once:true},
+  heart:{icon:'❤️', name:'하트 물약',   price:10, desc:'하트 1개 회복 (최대 5개)', once:false},
+  lens: {icon:'🔍', name:'돋보기',      price:6,  desc:'오두막 문제에서 오답 1개를 지워요.', once:false}
+};
+
+const GOAL = 20, MAX_HEARTS = 5, CABIN_COINS = 5;
+
+/* =========================================================
+   2. 상태
+   ========================================================= */
+const state = {
+  char:'steven', started:false, inside:null, riding:null,
+  coins:0, hearts:MAX_HEARTS, solved:0, wrong:0, items:{lens:0}, owned:new Set(),
+  visited:new Set(), harvested:new Set(), harvestTimes:[], papers:0, shopBought:0,
+  selectedCrop:null, startTime:0, over:false
+};
+const rng = (() => { let s = 20261029; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; })();
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* =========================================================
+   3. 소리 — 배경음악 선율은 버전 1(캔바 AI 코드)의 노래 그대로
+   ========================================================= */
+const Audio = (() => {
+  let ctx = null, musicGain = null, timer = null, step = 0, musicOn = true, sfxOn = true;
+  try { musicOn = localStorage.getItem('fq-music') !== 'off'; sfxOn = localStorage.getItem('fq-sfx') !== 'off'; } catch (e) {}
+  const ac = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === 'suspended') ctx.resume(); return ctx; };
+  const NOTES = [261.63,329.63,392,523.25,392,329.63,293.66,349.23];
+  function startMusic(){
+    const c = ac(); if (!c || timer) return;
+    if (!musicGain) { musicGain = c.createGain(); musicGain.gain.value = .07; musicGain.connect(c.destination); }
+    timer = setInterval(() => {
+      const o = c.createOscillator(), g = c.createGain(), now = c.currentTime;
+      o.type = 'triangle'; o.frequency.value = NOTES[step++ % NOTES.length];
+      g.gain.setValueAtTime(.0001, now); g.gain.linearRampToValueAtTime(.32, now + .03); g.gain.exponentialRampToValueAtTime(.0001, now + .28);
+      o.connect(g); g.connect(musicGain); o.start(now); o.stop(now + .3);
+    }, 320);
+  }
+  function stopMusic(){ clearInterval(timer); timer = null; }
+  function tone(f, start, dur, type = 'triangle', vol = .08, slide){
+    const c = ac(); if (!c) return;
+    const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + start;
+    o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .018); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .02);
+  }
+  const FX = {
+    chime(){ [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,i*.075,.24,'triangle',.065)); },
+    coin(){ tone(988,0,.08,'square',.05); tone(1319,.08,.18,'square',.05); },
+    wrong(){ tone(240,0,.3,'sawtooth',.08,120); },
+    door(){ tone(140,0,.15,'sine',.25,80); tone(110,.16,.15,'sine',.25,70); },
+    pick(){ tone(660,0,.1,'sine',.12,1320); },
+    win(){ [523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.26,'triangle',.12)); },
+    lose(){ [392,330,262,196].forEach((f,i)=>tone(f,i*.2,.32,'triangle',.11)); },
+    mount(){ tone(330,0,.12,'square',.05,660); }
+  };
+  return {
+    fx(n){ if (sfxOn && FX[n]) try { FX[n](); } catch (e) {} },
+    begin(){ ac(); if (musicOn) startMusic(); },
+    toggleMusic(){ musicOn = !musicOn; try { localStorage.setItem('fq-music', musicOn ? 'on' : 'off'); } catch (e) {} musicOn ? startMusic() : stopMusic(); return musicOn; },
+    toggleSfx(){ sfxOn = !sfxOn; try { localStorage.setItem('fq-sfx', sfxOn ? 'on' : 'off'); } catch (e) {} return sfxOn; },
+    get musicOn(){ return musicOn; }, get sfxOn(){ return sfxOn; }
+  };
+})();
+
+/* =========================================================
+   4. 3D 장면
+   ========================================================= */
+const mount = $('scene');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xadd2bd);
+scene.fog = new THREE.Fog(0xadd2bd, 45, 120);
+const camera = new THREE.PerspectiveCamera(50, 1, .1, 260);
+const renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+mount.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xeaf9df, 0x456745, 1.9));
+const sun = new THREE.DirectionalLight(0xffecc3, 2.3);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, {left:-34, right:34, top:34, bottom:-34, near:1, far:120});
+scene.add(sun, sun.target);
+
+const matCache = new Map();
+const mat = (color, opt = {}) => {
+  const key = color + JSON.stringify(opt);
+  if (!matCache.has(key)) matCache.set(key, new THREE.MeshStandardMaterial({color, roughness:.95, ...opt}));
+  return matCache.get(key);
+};
+function mesh(geo, material, parent, x = 0, y = 0, z = 0, shadow = true){
+  const o = new THREE.Mesh(geo, material); o.position.set(x, y, z);
+  o.castShadow = shadow; o.receiveShadow = true; parent.add(o); return o;
+}
+const box = (p, w, h, d, m, x, y, z) => mesh(new THREE.BoxGeometry(w, h, d), m, p, x, y, z);
+const ball = (p, r, m, x, y, z) => mesh(new THREE.SphereGeometry(r, 14, 10), m, p, x, y, z);
+const cyl = (p, rt, rb, h, m, x, y, z, seg = 10) => mesh(new THREE.CylinderGeometry(rt, rb, h, seg), m, p, x, y, z);
+
+const labels = [];
+function label(text, {bg = 'rgba(16,44,36,.9)', fg = '#fff9e9', w = 3.4, size = 54, width = 360} = {}){
+  const c = document.createElement('canvas'); c.width = width; c.height = 96;
+  const g = c.getContext('2d');
+  const draw = () => {
+    g.clearRect(0, 0, width, 96);
+    g.fillStyle = bg; g.beginPath();
+    if (g.roundRect) g.roundRect(4, 4, width - 8, 88, 26); else g.rect(4, 4, width - 8, 88);
+    g.fill();
+    g.fillStyle = fg; g.font = `${size}px Jua, "Malgun Gothic", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(text, width / 2, 52);
+  };
+  draw();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  labels.push({text, draw, t});
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map:t, transparent:true, depthWrite:false}));
+  s.scale.set(w, w * 96 / width, 1); return s;
+}
+
+/* ---------- 땅 · 길 ---------- */
+const BOUND = 86, RING_R = 55.5;
+const ground = mesh(new THREE.PlaneGeometry(420, 420), mat(0x6a9a58), scene, 0, 0, 0, false);
+ground.rotation.x = -Math.PI / 2;
+const roadMat = mat(0xcdb07f);
+const roadX = mesh(new THREE.PlaneGeometry(184, 5), roadMat, scene, 0, .02, 0, false); roadX.rotation.x = -Math.PI / 2;
+const roadZ = mesh(new THREE.PlaneGeometry(5, 184), roadMat, scene, 0, .021, 0, false); roadZ.rotation.x = -Math.PI / 2;
+const ring = mesh(new THREE.RingGeometry(RING_R - 2.5, RING_R + 2.5, 120), roadMat, scene, 0, .019, 0, false); ring.rotation.x = -Math.PI / 2;
+const plaza = mesh(new THREE.CircleGeometry(11, 48), mat(0xdcc596), scene, 0, .025, 0, false); plaza.rotation.x = -Math.PI / 2;
+// 광장 분수
+const fountain = new THREE.Group(); fountain.position.set(0, 0, 0); scene.add(fountain);
+cyl(fountain, 3, 3.2, .7, mat(0xb9b2a4), 0, .35, 0, 28);
+cyl(fountain, 2.6, 2.6, .12, mat(0x6bb7ac, {roughness:.3}), 0, .66, 0, 28);
+cyl(fountain, .35, .45, 1.6, mat(0xb9b2a4), 0, 1.2, 0);
+const spout = ball(fountain, .55, mat(0x9fd8e8, {roughness:.2, transparent:true, opacity:.8}), 0, 2.2, 0);
+// 표지판
+const sign = new THREE.Group(); sign.position.set(6.5, 0, -6.5); scene.add(sign);
+cyl(sign, .12, .14, 2.6, mat(0x7d4628), 0, 1.3, 0);
+const signBoard = label('오두막 30곳 · 20문제!', {bg:'rgba(125,70,40,.95)', w:4.2, size:46, width:440}); signBoard.position.y = 3; sign.add(signBoard);
+
+/* ---------- 장소 ---------- */
+const PLACES = {
+  plaza:  {name:'숲속 광장',     x:0,   z:0,   r:11},
+  pond:   {name:'반짝이는 연못',  x:-28, z:-26, r:9},
+  flowers:{name:'야생화 꽃밭',    x:26,  z:-26, r:10},
+  field:  {name:'넓은 텃밭',      x:28,  z:27,  r:11},
+  shop:   {name:'숲속 큰 상점',   x:-24, z:14,  r:7},
+  garage: {name:'탈것 주차장',    x:-12, z:30,  r:7}
+};
+const colliders = []; // {x,z,r} 원 또는 {box:[minX,maxX,minZ,maxZ]}
+
+/* ---------- 연못 ---------- */
+const pond = new THREE.Group(); pond.position.set(PLACES.pond.x, 0, PLACES.pond.z); scene.add(pond);
+const water = mesh(new THREE.CylinderGeometry(8, 7.9, .08, 48), mat(0x6bb7ac, {roughness:.25, metalness:.15}), pond, 0, .06, 0, false); water.scale.z = .75;
+const shore = mesh(new THREE.TorusGeometry(8.03, .38, 8, 48), mat(0x9aab76), pond, 0, .09, 0, false); shore.rotation.x = Math.PI / 2; shore.scale.y = .75;
+for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; const lily = mesh(new THREE.CircleGeometry(.6, 12), mat(0x4f9a55), pond, Math.cos(a) * 4.5, .12, Math.sin(a) * 3.2, false); lily.rotation.x = -Math.PI / 2; }
+const duck = new THREE.Group(); pond.add(duck);
+ball(duck, .45, mat(0xfff3c4), 0, .35, 0); ball(duck, .28, mat(0xfff3c4), 0, .75, -.35); box(duck, .2, .1, .25, mat(0xf2a33a), 0, .7, -.65);
+
+/* ---------- 꽃밭 + 힌트 종이 ---------- */
+const flowerHeads = [], flowerStems = [];
+function addFlower(x, z){ flowerStems.push([x, z]); flowerHeads.push([x, z, [0xffd392,0xffeee0,0xeeb7ae,0xe4c8ea,0xff9fb2][flowerHeads.length % 5]]); }
+for (let i = 0; i < 260; i++) { const a = rng() * Math.PI * 2, r = Math.sqrt(rng()) * 10; addFlower(PLACES.flowers.x + Math.cos(a) * r, PLACES.flowers.z + Math.sin(a) * r); }
+const papers = [[22,-22],[31,-29],[24,-31]].map(([x, z], i) => {
+  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  box(g, .9, .06, .65, mat(0xfff1bd), 0, .5, 0).rotation.y = i;
+  box(g, .5, .02, .06, mat(0x9a6a25), 0, .54, -.1).rotation.y = i;
+  const glow = mesh(new THREE.TorusGeometry(.8, .06, 6, 24), mat(0xf8cb65, {emissive:0xf8a020, emissiveIntensity:.8}), g, 0, .1, 0, false); glow.rotation.x = Math.PI / 2;
+  return {g, x, z, taken:false};
+});
+
+/* ---------- 텃밭 ---------- */
+const field = new THREE.Group(); field.position.set(PLACES.field.x, 0, PLACES.field.z); scene.add(field);
+box(field, 18, .16, 13, mat(0x765338), 0, .08, 0);
+const fence = mat(0x9a6a43);
+for (const x of [-9, 9]) for (const z of [-6.5, 6.5]) cyl(field, .12, .15, 1.35, mat(0x76543f), x, .68, z);
+box(field, 18, .1, .1, fence, 0, .95, -6.5); box(field, 18, .1, .1, fence, 0, .52, -6.5);
+box(field, 7, .1, .1, fence, -5.5, .95, 6.5); box(field, 7, .1, .1, fence, 5.5, .95, 6.5);
+box(field, .1, .1, 13, fence, -9, .95, 0); box(field, .1, .1, 13, fence, 9, .95, 0);
+const CROPS = [['딸기','strawberry',0xff5f62],['수박','watermelon',0x3f8f48],['멜론','melon',0xc6dc7a]];
+const cropGroups = [];
+CROPS.forEach(([name, id, color], idx) => {
+  for (let row = 0; row < 6; row++) for (let col = 0; col < 7; col++) {
+    const g = new THREE.Group(); g.position.set(-7.4 + idx * 5.2 + col * .62 + (row % 2) * .2, 0, -4 + row * 1.35); field.add(g);
+    g.userData.crop = id;
+    cyl(g, .07, .1, .55, mat(0x477344), 0, .3, 0, 6);
+    const fr = ball(g, id === 'strawberry' ? .2 : .3, mat(color), 0, .62, 0);
+    if (id === 'watermelon') fr.scale.set(1.2, .9, 1);
+    cropGroups.push(g);
+  }
+  const l = label(name, {w:2.6, size:56, width:260}); l.position.set(-5.5 + idx * 5.2, 2.2, -5.8); field.add(l);
+});
+
+/* ---------- 큰 상점 ---------- */
+const shop = new THREE.Group(); shop.position.set(PLACES.shop.x, 0, PLACES.shop.z); shop.rotation.y = Math.PI; scene.add(shop);
+box(shop, 10, 5, 7, mat(0xd9b477), 0, 2.5, 0);
+const shopRoof = mesh(new THREE.ConeGeometry(8, 2.8, 4), mat(0x375c48), shop, 0, 6.15, 0); shopRoof.rotation.y = Math.PI / 4; shopRoof.scale.z = .73;
+box(shop, 2.2, 3.2, .15, mat(0x765439), 0, 1.6, 3.58);
+for (const x of [-3.2, 3.2]) box(shop, 1.9, 1.6, .17, mat(0xf7d891, {emissive:0x6a4a10, emissiveIntensity:.3}), x, 3.15, 3.6);
+for (let i = 0; i < 6; i++) box(shop, 1.66, .22, 1.2, mat(i % 2 ? 0xfff4e3 : 0xd9573f), -4.15 + i * 1.66, 4.55, 4.1).rotation.x = .5;
+const shopSign = label('🛍️ 숲속 큰 상점', {bg:'rgba(248,203,101,.97)', fg:'#143d31', w:5.4, size:52, width:460}); shopSign.position.set(0, 6.1, 3.9); shop.add(shopSign);
+colliders.push({box:[PLACES.shop.x - 5.2, PLACES.shop.x + 5.2, PLACES.shop.z - 3.7, PLACES.shop.z + 3.7]});
+const shopDoor = {x:PLACES.shop.x, z:PLACES.shop.z - 4.6};
+
+/* ---------- 오두막 30채 ---------- */
+const cabinTpl = new THREE.Group();
+box(cabinTpl, 5, 3.8, 4.8, mat(0xa77a4e), 0, 1.9, 0);
+const ctRoof = mesh(new THREE.ConeGeometry(4.2, 2.5, 4), mat(0x63463b), cabinTpl, 0, 4.7, 0); ctRoof.rotation.y = Math.PI / 4; ctRoof.scale.z = .87;
+box(cabinTpl, 1.3, 2.3, .12, mat(0x51382c), 0, 1.16, 2.46);
+box(cabinTpl, .85, .9, .13, mat(0xf7d891), -1.55, 2.25, 2.46);
+box(cabinTpl, .65, 1.4, .7, mat(0x795347), 1.4, 5.4, -.6);
+box(cabinTpl, 1.8, .14, .9, mat(0x8a6a4a), 0, .07, 2.95);
+const cabins = [];
+const cabinSpots = [];
+for (let i = 0; i < 24; i++) { const a = (i * 15 + 7.5) * Math.PI / 180, r = 65; cabinSpots.push({x:Math.cos(a) * r, z:Math.sin(a) * r, dx:-Math.cos(a), dz:-Math.sin(a)}); }
+[[16,-7,0,1],[-16,-7,0,1],[38,7,0,-1],[-38,-7,0,1],[7,40,-1,0],[-7,-40,1,0]].forEach(([x,z,dx,dz]) => cabinSpots.push({x, z, dx, dz}));
+// 번호: 광장에서 가까운 순서
+cabinSpots.sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z) || Math.atan2(a.z, a.x) - Math.atan2(b.z, b.x));
+cabinSpots.forEach((s, i) => {
+  const g = cabinTpl.clone(); g.position.set(s.x, 0, s.z); g.rotation.y = Math.atan2(s.dx, s.dz); scene.add(g);
+  const lampMat = new THREE.MeshStandardMaterial({color:0xf8cb65, emissive:0xf8a020, emissiveIntensity:.9, roughness:.4});
+  const lamp = mesh(new THREE.SphereGeometry(.28, 12, 10), lampMat, g, 1.1, 2.6, 2.7, false);
+  cyl(g, .05, .05, .5, mat(0x2b2a2a), 1.1, 3.0, 2.7, 6);
+  const flagMat = new THREE.MeshStandardMaterial({color:0xf8cb65, roughness:.6, side:THREE.DoubleSide});
+  cyl(g, .07, .07, 3, mat(0x5c3a24), -2.2, 5.2, 1.8, 6);
+  const flag = mesh(new THREE.PlaneGeometry(1.3, .8), flagMat, g, -1.55, 6.3, 1.8, false);
+  const num = label(String(i + 1), {bg:'rgba(255,249,233,.96)', fg:'#143d31', w:1.5, size:68, width:150}); num.position.set(0, 3.25, 2.8); g.add(num);
+  colliders.push({x:s.x, z:s.z, r:3.4});
+  cabins.push({id:i, num:i + 1, x:s.x, z:s.z, door:{x:s.x + s.dx * 4.1, z:s.z + s.dz * 4.1}, group:g, lampMat, flagMat, flag, q:null, solved:false, tries:0, removed:new Set()});
+});
+
+/* ---------- 나무 (인스턴스로 가볍게) ---------- */
+function freeSpot(x, z, pad){
+  if (Math.abs(x) < 4 + pad || Math.abs(z) < 4 + pad) return false;
+  if (Math.abs(Math.hypot(x, z) - RING_R) < 4 + pad) return false;
+  if (Math.hypot(x, z) < 14) return false;
+  for (const p of Object.values(PLACES)) if (Math.hypot(x - p.x, z - p.z) < p.r + 3 + pad) return false;
+  for (const c of cabins) if (Math.hypot(x - c.x, z - c.z) < 6.5 + pad) return false;
+  return true;
+}
+const treePos = [];
+let guard = 0;
+while (treePos.length < 430 && guard++ < 20000) {
+  const edge = rng() < .35;
+  const x = edge ? (rng() < .5 ? -1 : 1) * (78 + rng() * 14) : (rng() * 2 - 1) * 92;
+  const z = edge ? (rng() * 2 - 1) * 92 : (rng() * 2 - 1) * 92;
+  const [px, pz] = edge && rng() < .5 ? [z, x] : [x, z];
+  if (!freeSpot(px, pz, 0)) continue;
+  if (treePos.some(t => Math.hypot(t[0] - px, t[1] - pz) < 3.2)) continue;
+  treePos.push([px, pz, .85 + rng() * .8]);
+}
+const trunkGeo = new THREE.CylinderGeometry(.28, .41, 2.6, 7); trunkGeo.translate(0, 1.3, 0);
+const coneGeos = [0, 1, 2].map(i => { const g = new THREE.ConeGeometry(1.75 - i * .27, 3.1, 8); g.translate(0, 3.1 + i * 1.1, 0); return g; });
+const trunks = new THREE.InstancedMesh(trunkGeo, mat(0x76563d), treePos.length);
+const leaves = coneGeos.map(g => new THREE.InstancedMesh(g, new THREE.MeshStandardMaterial({roughness:.95}), treePos.length));
+const dummy = new THREE.Object3D(), tmpColor = new THREE.Color();
+const LEAF = [0x386c4b, 0x437d54, 0x517f46, 0x2f6243];
+const treeGrid = new Map();
+treePos.forEach(([x, z, s], i) => {
+  dummy.position.set(x, 0, z); dummy.rotation.set(0, rng() * 6, 0); dummy.scale.setScalar(s); dummy.updateMatrix();
+  trunks.setMatrixAt(i, dummy.matrix);
+  tmpColor.setHex(LEAF[i % LEAF.length]);
+  leaves.forEach(l => { l.setMatrixAt(i, dummy.matrix); l.setColorAt(i, tmpColor); });
+  const key = Math.floor(x / 8) + ',' + Math.floor(z / 8);
+  if (!treeGrid.has(key)) treeGrid.set(key, []);
+  treeGrid.get(key).push({x, z, r:.55 * s});
+});
+[trunks, ...leaves].forEach(m => { m.castShadow = true; m.receiveShadow = true; scene.add(m); });
+
+// 흩어진 꽃
+for (let i = 0; i < 380; i++) { const x = (rng() * 2 - 1) * 84, z = (rng() * 2 - 1) * 84; if (freeSpot(x, z, -2)) addFlower(x, z); }
+const stemMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(.035, .05, .54, 5).translate(0, .27, 0), mat(0x4f8347), flowerStems.length);
+const headMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(.19, 8, 6).translate(0, .6, 0), new THREE.MeshStandardMaterial({roughness:.8}), flowerHeads.length);
+flowerHeads.forEach(([x, z, c], i) => {
+  dummy.position.set(x, 0, z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(1); dummy.updateMatrix();
+  stemMesh.setMatrixAt(i, dummy.matrix); headMesh.setMatrixAt(i, dummy.matrix); headMesh.setColorAt(i, tmpColor.setHex(c));
+});
+scene.add(stemMesh, headMesh);
+
+/* ---------- 사람 (스티븐 · 마리아) ---------- */
+function makePerson(kind){
+  const g = new THREE.Group();
+  const skin = mat(0xf2c7a4), maria = kind === 'maria';
+  const shirt = mat(maria ? 0xf8cb65 : 0x3d7fb8), pants = mat(maria ? 0xf2c7a4 : 0x34495e), hair = mat(maria ? 0x4a2a1c : 0x6b3f22);
+  const legs = [-.17, .17].map(x => { const p = new THREE.Group(); p.position.set(x, .86, 0); g.add(p); box(p, .22, .84, .24, pants, 0, -.42, 0); box(p, .26, .16, .34, mat(maria ? 0xe4577d : 0x2b2a2a), 0, -.82, -.05); return p; });
+  if (maria) cyl(g, .32, .52, .5, mat(0xe4577d), 0, .9, 0, 12);
+  box(g, .66, .82, .42, shirt, 0, 1.3, 0);
+  const arms = [-.45, .45].map(x => { const p = new THREE.Group(); p.position.set(x, 1.66, 0); g.add(p); box(p, .18, .4, .2, shirt, 0, -.18, 0); box(p, .16, .38, .18, skin, 0, -.55, 0); return p; });
+  ball(g, .34, skin, 0, 2.05, 0);
+  for (const x of [-.12, .12]) ball(g, .045, mat(0x1d2a24), x, 2.08, -.31);
+  box(g, .14, .04, .04, mat(0x8a2b2b), 0, 1.93, -.32);
+  if (maria) {
+    ball(g, .36, hair, 0, 2.15, .06).scale.set(1, .85, 1);
+    box(g, .62, .62, .2, hair, 0, 1.82, .22);
+    ball(g, .17, hair, 0, 2.2, .46); ball(g, .08, mat(0xe4577d), 0, 2.3, .38);
+  } else {
+    ball(g, .36, hair, 0, 2.14, .06).scale.set(1, .8, 1);
+    cyl(g, .37, .37, .2, mat(0xd9573f), 0, 2.32, 0, 16);
+    box(g, .5, .05, .34, mat(0xb23e29), 0, 2.24, -.36);
+  }
+  return {g, legs, arms};
+}
+
+/* ---------- 탈것 (버전 1 모델을 다듬음) ---------- */
+function makeHorse(){
+  const h = new THREE.Group(); const coat = mat(0x986341), dark = mat(0x4d352c);
+  box(h, 1.1, 1.15, 2.05, coat, 0, 1.75, 0);
+  box(h, .7, 1.4, .76, coat, 0, 2.38, -.72).rotation.x = -.38;
+  box(h, .75, .7, 1.05, coat, 0, 3.03, -1.08).rotation.x = .16;
+  box(h, .64, .34, .55, mat(0xc28f67), 0, 2.8, -1.7);
+  for (const x of [-.29, .29]) { box(h, .15, .4, .19, dark, x, 3.53, -1.06); ball(h, .07, dark, x * 1.25, 3.12, -1.57); }
+  box(h, .25, .8, .65, dark, 0, 3.12, -.55).rotation.x = -.4;
+  const legs = [];
+  for (const x of [-.37, .37]) for (const z of [-.73, .72]) { const p = new THREE.Group(); p.position.set(x, 1.35, z); h.add(p); box(p, .24, 1.14, .27, coat, 0, -.58, 0); box(p, .31, .18, .37, dark, 0, -1.11, -.04); legs.push(p); }
+  const tail = box(h, .28, 1.15, .3, dark, 0, 1.42, 1.18); tail.rotation.x = -.48;
+  box(h, 1.2, .22, .95, mat(0xd9573f), 0, 2.43, .18);
+  return {obj:h, legs, tail, seat:new THREE.Vector3(0, 1.62, .2), pose:'ride'};
+}
+function makeCar(){
+  const c = new THREE.Group(); const red = mat(0xb85137), wheel = mat(0x26312d);
+  box(c, 2.35, .85, 3.6, red, 0, .96, 0);
+  box(c, 2.1, .2, 1.1, red, 0, 1.45, 1.1);
+  box(c, 1.9, .55, .08, mat(0xa4c8bb, {roughness:.2}), 0, 1.65, -.55).rotation.x = -.35;
+  box(c, 1.8, .5, .5, mat(0x3a2a22), 0, 1.5, .5);
+  for (const x of [-1.17, 1.17]) for (const z of [-1.11, 1.11]) { const w = mesh(new THREE.CylinderGeometry(.42, .42, .25, 16), wheel, c, x, .48, z); w.rotation.z = Math.PI / 2; }
+  for (const x of [-.73, .73]) box(c, .4, .26, .09, mat(0xffe4a1, {emissive:0x806020, emissiveIntensity:.4}), x, 1.06, -1.85);
+  return {obj:c, legs:[], seat:new THREE.Vector3(0, .38, .2), pose:'sit', scale:.85};
+}
+function makeBike(){
+  const b = new THREE.Group(); const frame = mat(0xe1a34b), wheel = mat(0x26312d);
+  for (const z of [-.8, .8]) { const w = mesh(new THREE.TorusGeometry(.52, .09, 8, 20), wheel, b, 0, .57, z); w.rotation.y = Math.PI / 2; }
+  const beam = (x1, y1, z1, x2, y2, z2, r) => { const a = new THREE.Vector3(x1, y1, z1), v = new THREE.Vector3(x2, y2, z2); const o = mesh(new THREE.CylinderGeometry(r, r, a.distanceTo(v), 8), frame, b); o.position.copy(a).add(v).multiplyScalar(.5); o.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), v.sub(a).normalize()); };
+  beam(0,.57,-.8,0,1.28,.07,.06); beam(0,1.28,.07,0,.57,.8,.06); beam(0,.57,.8,0,.93,-.03,.06); beam(0,.93,-.03,0,.57,-.8,.06); beam(0,.57,-.8,0,1.59,-.83,.05);
+  box(b, .36, .08, .5, wheel, 0, 1.38, .14); box(b, .95, .08, .08, wheel, 0, 1.59, -.83);
+  return {obj:b, legs:[], seat:new THREE.Vector3(0, .58, .18), pose:'bike'};
+}
+const vehicles = [
+  {id:'horse', name:'말',     speed:9,  ...makeHorse(), home:[-8, 27]},
+  {id:'car',   name:'자동차', speed:13, ...makeCar(),   home:[-14, 31]},
+  {id:'bike',  name:'자전거', speed:10.5, ...makeBike(), home:[-20, 27]}
+];
+vehicles.forEach(v => { v.obj.position.set(v.home[0], 0, v.home[1]); scene.add(v.obj); });
+const garageSign = label('🐴 🚗 🚲 탈것 타는 곳', {w:4.6, size:44, width:440}); garageSign.position.set(-14, 3.2, 23.5); scene.add(garageSign);
+
+/* ---------- 플레이어 · 안내 친구 ---------- */
+let player = null, playerBody = null, guide = null;
+const guideLines = [
+  '오두막 30곳마다 서로 다른 출처 문제가 있어. 20문제를 풀면 모험 성공이야!',
+  '출처에는 만든 사람, 작품 이름, 출처(사이트), 이용 조건을 적어!',
+  '꽃밭에 힌트 종이가 3장 떨어져 있대. 주우면 돋보기가 생겨서 오답 하나를 지울 수 있어.',
+  '상점에서 물건을 사려면 출처 확인 문제를 맞혀야 해.',
+  '지도는 M 키나 오른쪽 위 지도를 누르면 크게 볼 수 있어. 노란 집이 아직 안 푼 오두막!',
+  '탈것을 타면 빨라! 하지만 오두막에는 내려서 걸어 들어가야 해.'
+];
+let guideIdx = 0;
+function setupCharacters(){
+  playerBody = makePerson(state.char);
+  player = playerBody.g; player.position.set(0, 0, 8); player.rotation.y = 0; scene.add(player);
+  const other = state.char === 'steven' ? 'maria' : 'steven';
+  guide = makePerson(other); guide.g.position.set(-5, 0, -5.5); guide.g.rotation.y = Math.PI * .75; scene.add(guide.g);
+  const nm = label(other === 'maria' ? '마리아' : '스티븐', {w:2.2, size:56, width:240}); nm.position.y = 3; guide.g.add(nm);
+  guide.name = other === 'maria' ? '마리아' : '스티븐';
+}
+
+/* ---------- 길잡이 화살표 ---------- */
+const arrow = new THREE.Group(); arrow.visible = false; scene.add(arrow);
+const arrowMat = new THREE.MeshStandardMaterial({color:0xf8cb65, emissive:0xffa400, emissiveIntensity:1});
+const shaft = mesh(new THREE.CylinderGeometry(.12, .12, 1.2, 10), arrowMat, arrow, 0, 0, 0, false); shaft.rotation.x = Math.PI / 2; shaft.position.z = -.4;
+const head = mesh(new THREE.ConeGeometry(.35, .7, 12), arrowMat, arrow, 0, 0, -1.3, false); head.rotation.x = -Math.PI / 2;
+
+/* =========================================================
+   5. 지도
+   ========================================================= */
+const MAP_R = 92;
+function drawMap(ctx, S, big){
+  const k = S / (MAP_R * 2), X = x => (x + MAP_R) * k, Z = z => (z + MAP_R) * k;
+  ctx.clearRect(0, 0, S, S);
+  ctx.fillStyle = '#6a9a58'; ctx.fillRect(0, 0, S, S);
+  if (big) { ctx.fillStyle = '#4f7f45'; for (const [x, z, s] of treePos) { ctx.beginPath(); ctx.arc(X(x), Z(z), 1.4 * k * s, 0, 7); ctx.fill(); } }
+  ctx.strokeStyle = '#d9c08f'; ctx.lineCap = 'round';
+  ctx.lineWidth = 5 * k; ctx.beginPath(); ctx.moveTo(X(-92), Z(0)); ctx.lineTo(X(92), Z(0)); ctx.moveTo(X(0), Z(-92)); ctx.lineTo(X(0), Z(92)); ctx.stroke();
+  ctx.beginPath(); ctx.arc(X(0), Z(0), RING_R * k, 0, 7); ctx.stroke();
+  ctx.fillStyle = '#dcc596'; ctx.beginPath(); ctx.arc(X(0), Z(0), 11 * k, 0, 7); ctx.fill();
+  ctx.fillStyle = '#6bb7ac'; ctx.beginPath(); ctx.ellipse(X(PLACES.pond.x), Z(PLACES.pond.z), 8 * k, 6 * k, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#f3a6c0'; ctx.globalAlpha = .75; ctx.beginPath(); ctx.arc(X(PLACES.flowers.x), Z(PLACES.flowers.z), 10 * k, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+  ctx.fillStyle = '#8a5a3a'; ctx.fillRect(X(PLACES.field.x - 9), Z(PLACES.field.z - 6.5), 18 * k, 13 * k);
+  ctx.fillStyle = '#c9563c'; ctx.fillRect(X(PLACES.shop.x - 5), Z(PLACES.shop.z - 3.5), 10 * k, 7 * k);
+  for (const p of papers) if (!p.taken) { ctx.fillStyle = '#fff1bd'; ctx.fillRect(X(p.x) - 2.5 * k, Z(p.z) - 2 * k, 5 * k, 4 * k); }
+  const r = big ? 3.1 * k : 3.6 * k;
+  for (const c of cabins) {
+    ctx.fillStyle = c.solved ? '#3fbf6e' : '#f8cb65'; ctx.strokeStyle = '#143d31'; ctx.lineWidth = big ? 2.5 : 2;
+    ctx.beginPath(); ctx.arc(X(c.x), Z(c.z), r, 0, 7); ctx.fill(); ctx.stroke();
+    if (big) { ctx.fillStyle = '#143d31'; ctx.font = `${Math.round(r * 1.15)}px Jua, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.solved ? '✓' : c.num, X(c.x), Z(c.z) + 1); }
+  }
+  if (big) {
+    ctx.font = `${Math.round(S * .028)}px Jua, sans-serif`; ctx.textAlign = 'center'; ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(15,42,34,.85)'; ctx.fillStyle = '#fff';
+    for (const key of ['plaza','pond','flowers','field','shop','garage']) { const p = PLACES[key]; const y = Z(p.z) + (key === 'shop' ? -5 * k : key === 'plaza' ? 15 * k : 12 * k); ctx.strokeText(p.name, X(p.x), y); ctx.fillText(p.name, X(p.x), y); }
+  }
+  if (state.owned.has('trail') && player) { const t = nearestUnsolved(); if (t) { ctx.setLineDash([6, 6]); ctx.strokeStyle = '#ffd65a'; ctx.lineWidth = big ? 4 : 3; ctx.beginPath(); ctx.moveTo(X(actor().position.x), Z(actor().position.z)); ctx.lineTo(X(t.x), Z(t.z)); ctx.stroke(); ctx.setLineDash([]); } }
+  if (player) {
+    const a = actor(), px = X(a.position.x), pz = Z(a.position.z), rot = a.rotation.y, s = big ? 14 : 11;
+    ctx.save(); ctx.translate(px, pz); ctx.rotate(-rot);
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#d9573f'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(s * .7, s * .7); ctx.lineTo(0, s * .3); ctx.lineTo(-s * .7, s * .7); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+}
+const mini = $('minimap').getContext('2d'), bigCtx = $('bigmap-canvas').getContext('2d');
+
+/* =========================================================
+   6. UI 도우미
+   ========================================================= */
+let toastTimer = null;
+function toast(text, ms = 2600){ const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), ms); }
+function floatCoin(text){ const el = document.createElement('div'); el.className = 'float-coin'; el.textContent = text; const r = $('coins').getBoundingClientRect(); el.style.left = r.left + 'px'; el.style.top = (r.bottom + 4) + 'px'; document.body.appendChild(el); setTimeout(() => el.remove(), 1200); }
+function addCoins(n, why){
+  const gain = n > 0 && state.owned.has('bonus') ? n * 2 : n;
+  state.coins += gain; renderHUD();
+  if (gain > 0) { floatCoin(`+${gain}`); Audio.fx('coin'); const c = $('coins'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); if (why) toast(`${why} 코인 +${gain}`); }
+  return gain;
+}
+function renderHUD(){
+  $('coins').textContent = `🪙 ${state.coins}`; $('shop-coins').textContent = `🪙 ${state.coins}`;
+  const h = $('hearts'); h.innerHTML = '';
+  for (let i = 0; i < MAX_HEARTS; i++) h.insertAdjacentHTML('beforeend', `<svg class="${i < state.hearts ? '' : 'lost'}"><use href="#heart"/></svg>`);
+  h.setAttribute('aria-label', `하트 ${state.hearts}개`);
+  $('prog-txt').textContent = `${state.solved} / ${GOAL}`;
+  $('prog-bar').style.width = Math.min(100, state.solved / GOAL * 100) + '%';
+  const b = [];
+  if (state.owned.has('speed')) b.push('👟 빠른 신발');
+  if (state.owned.has('bonus')) b.push('🍀 코인 2배');
+  if (state.owned.has('trail')) b.push('✨ 길잡이');
+  if (state.items.lens) b.push(`🔍 돋보기 ×${state.items.lens}`);
+  $('buffs').innerHTML = b.map(x => `<span class="buff">${x}</span>`).join('');
+  renderMissions();
+}
+function renderMissions(){
+  const m = [
+    [state.solved >= GOAL, `오두막 문제 ${GOAL}개 풀기 (${Math.min(state.solved, GOAL)}/${GOAL})`],
+    [state.visited.has('guide'), `광장에서 ${guide ? guide.name : '친구'}에게 말 걸기`],
+    [state.papers >= 3, `꽃밭에서 힌트 종이 줍기 (${state.papers}/3)`],
+    [state.harvested.size >= 3, `텃밭에서 딸기·수박·멜론 수확하기 (${state.harvested.size}/3)`],
+    [state.shopBought > 0, '상점에서 출처 문제 풀고 아이템 사기'],
+    [state.visited.has('ride'), '말·자동차·자전거 타 보기']
+  ];
+  $('mission-list').innerHTML = m.map(([d, t]) => `<li class="${d ? 'done' : ''}"><span class="mk">${d ? '✓' : ''}</span><span>${t}</span></li>`).join('');
+}
+
+/* =========================================================
+   7. 상호작용
+   ========================================================= */
+const actor = () => state.riding ? state.riding.obj : player;
+function nearestUnsolved(){
+  const a = actor(); let best = null, bd = Infinity;
+  for (const c of cabins) if (!c.solved) { const d = Math.hypot(c.door.x - a.position.x, c.door.z - a.position.z); if (d < bd) { bd = d; best = c; } }
+  return best;
+}
+function zoneAt(x, z){
+  for (const [key, p] of Object.entries(PLACES)) {
+    if (key === 'field') { if (Math.abs(x - p.x) < 9.5 && Math.abs(z - p.z) < 7) return key; continue; }
+    if (key === 'pond') { if (((x - p.x) / 8.4) ** 2 + ((z - p.z) / 6.4) ** 2 < 1) return key; continue; }
+    if (Math.hypot(x - p.x, z - p.z) < p.r) return key;
+  }
+  for (const c of cabins) if (Math.hypot(x - c.x, z - c.z) < 7) return 'cabin:' + c.id;
+  return null;
+}
+let action = null, lastActKey = '';
+function computeAction(){
+  if (state.inside || !player) return null;
+  const a = actor(), x = a.position.x, z = a.position.z;
+  if (state.riding) {
+    const nearDoor = cabins.find(c => Math.hypot(c.door.x - x, c.door.z - z) < 3.4) || (Math.hypot(shopDoor.x - x, shopDoor.z - z) < 3.6 ? {shop:true} : null);
+    return {id:'dismount', label:`↘ ${state.riding.name}에서 내리기`, hint: nearDoor ? '내려서 걸어 들어가요' : `${state.riding.name}을(를) 타는 중`};
+  }
+  for (const c of cabins) if (Math.hypot(c.door.x - x, c.door.z - z) < 2.4)
+    return c.solved ? {id:'cabin', cabin:c, label:`✔ 오두막 ${c.num}번 (해결)`, hint:'이미 푼 오두막이에요'} : {id:'cabin', cabin:c, label:`🏡 오두막 ${c.num}번 들어가기`, hint:'문제가 기다리고 있어요'};
+  if (Math.hypot(shopDoor.x - x, shopDoor.z - z) < 2.8) return {id:'shop', label:'🛍️ 상점 들어가기', hint:'출처 문제를 풀고 아이템을 사요'};
+  if (guide && Math.hypot(guide.g.position.x - x, guide.g.position.z - z) < 3) return {id:'talk', label:`💬 ${guide.name}에게 말 걸기`, hint:'모험 팁을 들어요'};
+  for (const v of vehicles) if (Math.hypot(v.obj.position.x - x, v.obj.position.z - z) < 3.2) return {id:'mount', v, label:`${{horse:'🐴',car:'🚗',bike:'🚲'}[v.id]} ${v.name} 타기`, hint:'올라탈 수 있어요'};
+  if (zoneAt(x, z) === 'field') return state.selectedCrop ? {id:'harvest', label:'🌾 작물 수확하기', hint:'코인 1개씩!'} : {id:'none', hint:'수확할 작물을 골라요'};
+  return null;
+}
+function doAction(){
+  if (!action || state.over) return;
+  const id = action.id;
+  if (id === 'cabin') { if (action.cabin.solved) toast(`오두막 ${action.cabin.num}번은 이미 해결했어요. 다른 노란 오두막을 찾아가요!`); else openCabin(action.cabin); }
+  else if (id === 'shop') openShop();
+  else if (id === 'talk') { state.visited.add('guide'); toast(`${guide.name}: ${guideLines[guideIdx++ % guideLines.length]}`, 5200); Audio.fx('pick'); renderMissions(); }
+  else if (id === 'mount') mountVehicle(action.v);
+  else if (id === 'dismount') dismount();
+  else if (id === 'harvest') harvest();
+  lastActKey = '';
+}
+function mountVehicle(v){
+  state.riding = v; state.visited.add('ride');
+  v.obj.add(player); player.position.copy(v.seat); player.rotation.set(0, 0, 0); player.scale.setScalar(v.scale || 1);
+  const sit = v.pose === 'ride' ? -1.1 : v.pose === 'bike' ? -.6 : -1.4;
+  playerBody.legs.forEach((l, i) => { l.rotation.x = sit; l.rotation.z = v.pose === 'ride' ? (i ? -.5 : .5) : 0; });
+  playerBody.arms.forEach(a => a.rotation.x = -.9);
+  Audio.fx('mount'); toast(`${v.name}을(를) 탔어요! 오두막과 상점에는 내려서 들어가요.`); renderMissions();
+}
+function dismount(){
+  const v = state.riding; if (!v) return;
+  const side = new THREE.Vector3(v.id === 'car' ? 2.5 : 2, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), v.obj.rotation.y);
+  scene.add(player); player.scale.setScalar(1);
+  let px = v.obj.position.x + side.x, pz = v.obj.position.z + side.z;
+  if (!canMove(px, pz, .45)) { px = v.obj.position.x - side.x; pz = v.obj.position.z - side.z; }
+  player.position.set(px, 0, pz); player.rotation.y = v.obj.rotation.y;
+  playerBody.legs.forEach(l => { l.rotation.set(0, 0, 0); }); playerBody.arms.forEach(a => a.rotation.set(0, 0, 0));
+  state.riding = null; Audio.fx('mount');
+}
+function harvest(){
+  const now = Date.now();
+  state.harvestTimes = state.harvestTimes.filter(t => now - t < 60000);
+  if (state.harvestTimes.length >= 10) { const wait = Math.ceil((60000 - (now - state.harvestTimes[0])) / 1000); toast(`수확은 1분에 10번까지! ${wait}초 뒤에 다시 수확할 수 있어요.`); return; }
+  const g = cropGroups.find(c => c.visible && c.userData.crop === state.selectedCrop);
+  if (!g) return;
+  g.visible = false; setTimeout(() => { g.visible = true; }, 6000);
+  state.harvestTimes.push(now); state.harvested.add(state.selectedCrop);
+  const name = CROPS.find(c => c[1] === state.selectedCrop)[0];
+  addCoins(1, `${name}을(를) 수확했어요!`);
+}
+
+/* =========================================================
+   8. 오두막 퀴즈
+   ========================================================= */
+let curCabin = null;
+const LETTERS = ['가','나','다','라'];
+function openCabin(c){
+  curCabin = c; state.inside = 'cabin'; Audio.fx('door');
+  if (!c.order) c.order = shuffle(QUESTIONS[c.q].a.map((_, i) => i));
+  $('cabin-title').textContent = `🏡 오두막 ${c.num}번`;
+  $('cabin-meta').textContent = `해결 ${state.solved} / ${GOAL} · 하트 ${state.hearts}`;
+  renderCabin(); $('cabin').classList.remove('hidden'); $('cabin-fb').classList.add('hidden');
+  setTimeout(() => $('cabin-choices').firstChild?.focus(), 50);
+}
+function renderCabin(){
+  const c = curCabin, q = QUESTIONS[c.q];
+  $('cabin-q').textContent = q.q;
+  const box = $('cabin-choices'); box.replaceChildren();
+  c.order.forEach((orig, pos) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'choice'; b.dataset.orig = orig;
+    b.innerHTML = `<span class="l">${LETTERS[pos]}</span><span></span>`; b.lastChild.textContent = q.a[orig];
+    if (c.removed.has(orig)) { b.disabled = true; b.classList.add(c.wrongPicked?.has(orig) ? 'wrong' : 'gone'); }
+    if (c.solved) { b.disabled = true; if (orig === q.c) b.classList.add('right'); }
+    b.addEventListener('click', () => answerCabin(orig, b));
+    box.appendChild(b);
+  });
+  const lensOk = !c.solved && state.items.lens > 0 && q.a.length - c.removed.size > 2;
+  $('btn-lens').textContent = `🔍 돋보기 쓰기 (×${state.items.lens})`;
+  $('btn-lens').disabled = !lensOk;
+}
+function answerCabin(orig, btn){
+  const c = curCabin, q = QUESTIONS[c.q];
+  if (c.solved || state.over) return;
+  c.tries++;
+  const fb = $('cabin-fb');
+  if (orig === q.c) {
+    c.solved = true; state.solved++;
+    c.lampMat.color.setHex(0x3fbf6e); c.lampMat.emissive.setHex(0x1f9a4e); c.flagMat.color.setHex(0x3fbf6e);
+    const gain = addCoins(CABIN_COINS);
+    fb.className = 'fb good'; $('cabin-fb-t').textContent = c.tries === 1 ? '정답! 한 번에 맞혔어요!' : '정답!';
+    $('cabin-fb-p').textContent = q.why + ` (코인 +${gain})`;
+    $('cabin-fb-tip').textContent = '💡 생활 속 팁: ' + q.tip;
+    Audio.fx('chime');
+    if (state.solved >= GOAL) { $('btn-leave').textContent = '🎉 모험 완료! 결과 보기'; $('btn-leave').dataset.end = 'win'; }
+  } else {
+    c.removed.add(orig); (c.wrongPicked ||= new Set()).add(orig);
+    state.hearts--; state.wrong++;
+    const hh = $('hearts'); hh.classList.remove('hit'); void hh.offsetWidth; hh.classList.add('hit');
+    const f = $('hit-flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+    Audio.fx('wrong');
+    fb.className = 'fb bad'; $('cabin-fb-t').textContent = `아쉬워요! 하트 −1 (남은 하트 ${state.hearts}개)`;
+    $('cabin-fb-p').textContent = state.hearts > 0 ? '그 답은 출처와 저작권을 지키는 방법이 아니에요. 다시 생각해 보세요!' : '하트를 모두 잃었어요…';
+    $('cabin-fb-tip').textContent = '💡 생각 도우미: ' + q.tip;
+    if (state.hearts <= 0) { $('btn-leave').textContent = '결과 보기'; $('btn-leave').dataset.end = 'lose'; }
+  }
+  fb.classList.remove('hidden');
+  $('cabin-meta').textContent = `해결 ${state.solved} / ${GOAL} · 하트 ${state.hearts}`;
+  renderHUD(); renderCabin();
+  if (state.hearts <= 0) [...$('cabin-choices').children].forEach(b => b.disabled = true);
+  setTimeout(() => fb.scrollIntoView({block:'nearest', behavior:'smooth'}), 60);
+}
+$('btn-lens').addEventListener('click', () => {
+  const c = curCabin, q = QUESTIONS[c.q];
+  if (!c || c.solved || state.items.lens < 1) return;
+  const cand = c.order.filter(o => o !== q.c && !c.removed.has(o));
+  if (cand.length < 2 && q.a.length - c.removed.size <= 2) return;
+  c.removed.add(cand[Math.floor(Math.random() * cand.length)]); state.items.lens--;
+  Audio.fx('pick'); renderHUD(); renderCabin(); toast('돋보기로 오답 하나를 지웠어요!');
+});
+$('btn-leave').addEventListener('click', () => {
+  const end = $('btn-leave').dataset.end;
+  $('cabin').classList.add('hidden'); state.inside = null; Audio.fx('door');
+  if (end) { delete $('btn-leave').dataset.end; $('btn-leave').textContent = '🚪 오두막 나가기'; return showEnding(end === 'win'); }
+  if (curCabin && curCabin.solved) { const left = GOAL - state.solved; toast(`오두막 ${curCabin.num}번 해결! 앞으로 ${left}문제 남았어요. 지도에서 노란 오두막을 찾아요.`, 3600); }
+  // 문 앞으로 살짝 물러나기
+  if (curCabin) { const c = curCabin, dx = c.door.x - c.x, dz = c.door.z - c.z, l = Math.hypot(dx, dz); player.position.set(c.door.x + dx / l * 1.2, 0, c.door.z + dz / l * 1.2); player.rotation.y = Math.atan2(-dx, -dz); }
+  curCabin = null; lastActKey = ''; document.activeElement?.blur();
+});
+
+/* =========================================================
+   9. 상점 · 출처 확인 문제
+   ========================================================= */
+let pendingItem = null;
+function srcArt(kind){
+  const arts = {
+    sea:'<rect width="96" height="72" fill="#ffcf8a"/><circle cx="48" cy="44" r="16" fill="#ff8a5a"/><rect y="44" width="96" height="28" fill="#3d7fb8"/><path d="M0 52 q12 -6 24 0 t24 0 t24 0 t24 0" stroke="#bfe3ff" stroke-width="3" fill="none"/>',
+    mount:'<rect width="96" height="72" fill="#cfe8ff"/><path d="M0 72 L30 26 L50 52 L66 34 L96 72Z" fill="#7d8fa3"/><path d="M30 26 L38 38 L24 38Z M66 34 L72 42 L60 42Z" fill="#fff"/>',
+    flower:'<rect width="96" height="72" fill="#bfe8a8"/>' + [[20,40,'#ff9fb2'],[48,30,'#ffd65a'],[74,44,'#e4c8ea'],[34,58,'#fff'],[62,60,'#ff9fb2']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="8" fill="${c}"/><circle cx="${x}" cy="${y}" r="3" fill="#f2b632"/>`).join(''),
+    cat:'<rect width="96" height="72" fill="#fff1c7"/><ellipse cx="48" cy="50" rx="26" ry="16" fill="#f2a35a"/><circle cx="34" cy="38" r="12" fill="#f2a35a"/><path d="M24 30 L26 20 L32 28Z M38 28 L44 20 L44 32Z" fill="#f2a35a"/><path d="M28 38 q3 2 6 0 M36 38 q3 2 6 0" stroke="#5a3a22" stroke-width="2" fill="none"/>',
+    music:'<rect width="96" height="72" fill="#e3f1dc"/><path d="M40 52 V20 L70 14 V46" stroke="#143d31" stroke-width="5" fill="none"/><circle cx="34" cy="52" r="8" fill="#143d31"/><circle cx="64" cy="46" r="8" fill="#143d31"/>',
+    star:'<rect width="96" height="72" fill="#1d2f5a"/><path d="M0 60 q24 -14 48 0 t48 0 V72 H0Z" fill="#2f4f3f"/>' + [[16,14],[40,22],[66,12],[82,30],[28,36]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3" fill="#ffd65a"/>`).join('') + '<circle cx="78" cy="14" r="8" fill="#fff1c7"/>'
+  };
+  return `<svg viewBox="0 0 96 72" aria-hidden="true">${arts[kind]}</svg>`;
+}
+function makeCheck(){
+  const card = SRC_CARDS[Math.floor(Math.random() * SRC_CARDS.length)];
+  const right = `${card.type}: ${card.by}, 「${card.title}」, ${card.site}, ${card.lic}`;
+  const wrongs = shuffle([
+    `${card.type}: 인터넷`,
+    `${card.type}: 내가 만듦`,
+    `${card.type}: 「${card.title}」 (만든 사람 모름)`,
+    `${card.type}: ${card.site}에서 가져옴`
+  ]).slice(0, 2);
+  const opts = shuffle([right, ...wrongs]);
+  return {card, opts, answer:opts.indexOf(right)};
+}
+function openShop(){
+  state.inside = 'shop'; Audio.fx('door'); pendingItem = null;
+  $('check').classList.add('hidden'); $('shop-msg').textContent = '';
+  renderShop(); $('shop').classList.remove('hidden');
+}
+function renderShop(){
+  const grid = $('shop-grid'); grid.replaceChildren();
+  Object.entries(SHOP_ITEMS).forEach(([id, it]) => {
+    const owned = it.once && state.owned.has(id);
+    const full = id === 'heart' && state.hearts >= MAX_HEARTS;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'item';
+    b.disabled = owned || full || !!pendingItem;
+    b.innerHTML = `<span class="top"><span class="ic">${it.icon}</span><span class="nm">${it.name}</span><span class="pr">🪙 ${it.price}</span></span><span class="ds">${it.desc}</span>${owned ? '<span class="own">✓ 이미 샀어요</span>' : full ? '<span class="own">하트가 가득 찼어요</span>' : id === 'lens' && state.items.lens ? `<span class="own">가진 돋보기 ${state.items.lens}개</span>` : ''}`;
+    b.addEventListener('click', () => startBuy(id));
+    grid.appendChild(b);
+  });
+  $('shop-coins').textContent = `🪙 ${state.coins}`;
+}
+function startBuy(id){
+  const it = SHOP_ITEMS[id];
+  if (state.coins < it.price) { $('shop-msg').textContent = `🪙 ${it.price}코인이 필요해요. 오두막 문제를 풀거나 텃밭에서 수확해 보세요.`; Audio.fx('wrong'); return; }
+  pendingItem = {id, check:makeCheck()};
+  const {card, opts} = pendingItem.check;
+  $('check-q').textContent = `「${it.name}」을(를) 사려면, 아래 ${card.type}의 출처를 바르게 쓴 것을 골라요.`;
+  $('check-card').innerHTML = `${srcArt(card.kind)}<dl><dt>작품 이름</dt><dd>${card.title}</dd><dt>만든 사람</dt><dd>${card.by}</dd><dt>가져온 곳</dt><dd>${card.site}</dd><dt>이용 조건</dt><dd>${card.lic}</dd></dl>`;
+  const box = $('check-choices'); box.replaceChildren();
+  opts.forEach((t, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'choice'; b.innerHTML = `<span class="l">${LETTERS[i]}</span><span></span>`; b.lastChild.textContent = t; b.addEventListener('click', () => answerCheck(i)); box.appendChild(b); });
+  $('check').classList.remove('hidden'); $('shop-msg').textContent = '';
+  renderShop();
+  setTimeout(() => $('check').scrollIntoView({block:'nearest', behavior:'smooth'}), 50);
+}
+function answerCheck(i){
+  if (!pendingItem) return;
+  const {id, check} = pendingItem, it = SHOP_ITEMS[id];
+  [...$('check-choices').children].forEach((b, j) => { b.disabled = true; if (j === check.answer) b.classList.add('right'); else if (j === i) b.classList.add('wrong'); });
+  if (i === check.answer) {
+    state.coins -= it.price; state.shopBought++;
+    if (it.once) state.owned.add(id);
+    if (id === 'heart') state.hearts = Math.min(MAX_HEARTS, state.hearts + 1);
+    if (id === 'lens') state.items.lens++;
+    if (id === 'trail') arrow.visible = true;
+    $('shop-msg').textContent = `✅ 정답! 출처를 바르게 밝혔어요. 「${it.name}」 구매 완료!`;
+    Audio.fx('chime');
+  } else {
+    $('shop-msg').textContent = '❌ 구매 실패! 출처에는 만든 사람 · 작품 이름 · 가져온 곳 · 이용 조건이 모두 들어가야 해요. 다시 도전해 보세요.';
+    Audio.fx('wrong');
+  }
+  pendingItem = null; renderHUD();
+  setTimeout(() => { $('check').classList.add('hidden'); renderShop(); }, 1600);
+}
+$('btn-shop-leave').addEventListener('click', () => {
+  $('shop').classList.add('hidden'); state.inside = null; pendingItem = null; Audio.fx('door');
+  player.position.set(shopDoor.x, 0, shopDoor.z - 1.2); player.rotation.y = 0; lastActKey = ''; document.activeElement?.blur();
+});
+
+/* =========================================================
+   10. 큰 지도 · 빠른 이동
+   ========================================================= */
+const TRAVEL = [['plaza','🏞️ 숲속 광장',0,6],['shop','🛍️ 큰 상점',PLACES.shop.x,PLACES.shop.z - 6],['garage','🐴 탈것 타는 곳',-14,24],['pond','💧 연못',PLACES.pond.x + 10,PLACES.pond.z],['flowers','🌼 야생화 꽃밭',PLACES.flowers.x,PLACES.flowers.z + 12],['field','🌾 텃밭',PLACES.field.x,PLACES.field.z - 9]];
+TRAVEL.forEach(([k, t, x, z]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.addEventListener('click', () => { if (state.riding) dismount(); player.position.set(x, 0, z); closeMap(); toast(`${t}(으)로 이동했어요!`); }); $('travel').appendChild(b); });
+function openMap(){ if (state.inside || !state.started || state.over) return; state.inside = 'map'; drawMap(bigCtx, 900, true); $('bigmap').classList.remove('hidden'); $('map-close').focus(); }
+function closeMap(){ $('bigmap').classList.add('hidden'); if (state.inside === 'map') state.inside = null; lastActKey = ''; }
+$('btn-map').addEventListener('click', openMap);
+$('minimap').addEventListener('click', openMap);
+$('minimap').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openMap(); });
+$('map-close').addEventListener('click', closeMap);
+$('bigmap').addEventListener('click', e => { if (e.target === $('bigmap')) closeMap(); });
+
+/* =========================================================
+   11. 결과
+   ========================================================= */
+function showEnding(win){
+  state.over = true; state.inside = 'end';
+  const sec = Math.round((Date.now() - state.startTime) / 1000);
+  $('end-title').textContent = win ? '🎉 모험 성공!' : '모험 실패…';
+  $('end-lead').innerHTML = win ? `오두막 ${GOAL}곳의 저작권·출처 문제를 모두 풀었어요!<br>이제 그림·글·음악을 쓸 때 출처를 밝힐 수 있어요.` : `하트를 모두 잃었어요. 출처 밝히는 법을 다시 떠올리며<br>한 번 더 도전해 볼까요?`;
+  $('end-art').innerHTML = win
+    ? '<path d="M30 10 H90 V40 C90 60 76 72 60 72 C44 72 30 60 30 40 Z" fill="#ffd65a" stroke="#143d31" stroke-width="5"/><path d="M30 18 H14 C14 38 22 46 32 46 M90 18 H106 C106 38 98 46 88 46" stroke="#143d31" stroke-width="5" fill="none"/><rect x="52" y="72" width="16" height="14" fill="#e2a93a" stroke="#143d31" stroke-width="4"/><rect x="36" y="86" width="48" height="14" rx="4" fill="#7d4628" stroke="#143d31" stroke-width="4"/><path d="M60 22 l5 10 11 1.5-8 7.5 2 11-10-5.5-10 5.5 2-11-8-7.5 11-1.5z" fill="#fff"/>'
+    : '<circle cx="60" cy="55" r="44" fill="#ffe1d8"/>' + [0,1,2,3,4].map(i=>`<g transform="translate(${18+i*21} 46) scale(.42)"><path d="M24 42 C10 32 4 24 4 16 C4 9 10 5 15 5 C19 5 22 7 24 11 C26 7 29 5 33 5 C38 5 44 9 44 16 C44 24 38 32 24 42 Z" fill="#c9c2b4"/></g>`).join('');
+  const total = state.solved + state.wrong;
+  $('end-stats').innerHTML = [[`${state.solved}/${GOAL}`,'해결한 오두막'],[total ? Math.round(state.solved / total * 100) + '%' : '-','정답률'],[`${state.hearts}개`,'남은 하트'],[`${Math.floor(sec / 60)}분 ${sec % 60}초`,'모험 시간']].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('');
+  $('ending').classList.remove('hidden');
+  Audio.fx(win ? 'win' : 'lose');
+  if (win) { const host = $('end-card'), colors = ['#f8cb65','#3fbf6e','#d9573f','#3d7fb8','#ff9fb2']; for (let i = 0; i < 80; i++) { const c = document.createElement('i'); c.className = 'confetti'; c.style.left = Math.random() * 100 + '%'; c.style.background = colors[i % 5]; c.style.animationDuration = (2.5 + Math.random() * 2.5) + 's'; c.style.animationDelay = Math.random() + 's'; host.appendChild(c); setTimeout(() => c.remove(), 6000); } }
+}
+$('btn-again').addEventListener('click', () => location.reload());
+
+/* =========================================================
+   12. 이동 · 충돌
+   ========================================================= */
+function canMove(x, z, r){
+  if (Math.abs(x) > BOUND || Math.abs(z) > BOUND) return false;
+  for (const c of colliders) {
+    if (c.box) { if (x > c.box[0] - r && x < c.box[1] + r && z > c.box[2] - r && z < c.box[3] + r) return false; }
+    else if (Math.hypot(x - c.x, z - c.z) < c.r + r) return false;
+  }
+  if (Math.hypot(x, z) < 3.3 + r) return false; // 분수
+  const gx = Math.floor(x / 8), gz = Math.floor(z / 8);
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+    const list = treeGrid.get((gx + i) + ',' + (gz + j)); if (!list) continue;
+    for (const t of list) if (Math.hypot(x - t.x, z - t.z) < t.r + r) return false;
+  }
+  return true;
+}
+const keys = new Set(); let joyX = 0, joyY = 0;
+const joy = $('joy'), knob = $('knob');
+function setJoy(e){ const r = joy.getBoundingClientRect(); const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); const lim = r.width * .3, s = Math.min(1, lim / (Math.hypot(dx, dy) || 1)); joyX = dx * s / lim; joyY = dy * s / lim; knob.style.transform = `translate(${joyX * lim}px,${joyY * lim}px)`; }
+function releaseJoy(){ joyX = joyY = 0; knob.style.transform = ''; }
+joy.addEventListener('pointerdown', e => { e.preventDefault(); joy.setPointerCapture(e.pointerId); setJoy(e); Audio.begin(); });
+joy.addEventListener('pointermove', e => { if (joy.hasPointerCapture(e.pointerId)) setJoy(e); });
+['pointerup','pointercancel','lostpointercapture'].forEach(t => joy.addEventListener(t, releaseJoy));
+document.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'escape') { if (!$('bigmap').classList.contains('hidden')) closeMap(); return; }
+  if (!state.started || state.over) return;
+  if (k === 'm' && !e.repeat) { if ($('bigmap').classList.contains('hidden')) openMap(); else closeMap(); return; }
+  if (state.inside) return;
+  if (['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(k)) { e.preventDefault(); keys.add(k); }
+  if (!e.repeat && (k === 'e' || ((k === 'enter' || k === ' ') && document.activeElement?.tagName !== 'BUTTON'))) { e.preventDefault(); doAction(); }
+});
+document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+window.addEventListener('blur', () => { keys.clear(); releaseJoy(); });
+$('act').addEventListener('click', doAction);
+document.querySelectorAll('[data-crop]').forEach(b => b.addEventListener('click', () => {
+  state.selectedCrop = b.dataset.crop;
+  document.querySelectorAll('[data-crop]').forEach(o => o.setAttribute('aria-pressed', o === b));
+  lastActKey = ''; Audio.fx('pick');
+}));
+
+/* =========================================================
+   13. 시작
+   ========================================================= */
+document.querySelectorAll('[data-char]').forEach(b => b.addEventListener('click', () => {
+  state.char = b.dataset.char;
+  document.querySelectorAll('[data-char]').forEach(o => o.setAttribute('aria-pressed', o === b));
+}));
+$('btn-start').addEventListener('click', () => {
+  // 오두막마다 서로 다른 문제 배정 (30문제를 섞어 1:1)
+  const order = shuffle(QUESTIONS.map((_, i) => i));
+  cabins.forEach((c, i) => { c.q = order[i]; });
+  setupCharacters();
+  state.started = true; state.startTime = Date.now();
+  $('who-name').textContent = state.char === 'maria' ? '마리아' : '스티븐';
+  $('who-dot').style.background = state.char === 'maria' ? '#f8cb65' : '#3d7fb8';
+  $('start').classList.add('hidden');
+  ['hud-left','hud-right','hud-top','hud-bottom'].forEach(id => $(id).classList.remove('hidden'));
+  if (innerWidth < 900) $('missions').open = false;
+  Audio.begin(); renderHUD();
+  document.activeElement?.blur();
+  toast(`${guide.name === '마리아' ? '마리아가' : '스티븐이'} 광장에서 기다려요! 가까이 가서 말을 걸어 보세요.`, 4200);
+});
+$('btn-music').addEventListener('click', () => { const on = Audio.toggleMusic(); $('music-t').textContent = on ? '음악 켜짐' : '음악 꺼짐'; });
+$('btn-sound').addEventListener('click', () => { const on = Audio.toggleSfx(); $('sound-t').textContent = on ? '효과음 켜짐' : '효과음 꺼짐'; });
+$('music-t').textContent = Audio.musicOn ? '음악 켜짐' : '음악 꺼짐';
+$('sound-t').textContent = Audio.sfxOn ? '효과음 켜짐' : '효과음 꺼짐';
+
+/* =========================================================
+   14. 매 프레임
+   ========================================================= */
+function resize(){ const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 54 : 40; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+const clock = new THREE.Clock(), camTarget = new THREE.Vector3(), camLook = new THREE.Vector3();
+let t = 0, frameN = 0, lastZone = '', autoZoneDone = new Set();
+camera.position.set(30, 28, 40);
+function frame(){
+  requestAnimationFrame(frame);
+  const dt = Math.min(clock.getDelta(), .05); t += dt; frameN++;
+  spout.scale.y = 1 + Math.sin(t * 4) * .15;
+  duck.position.set(Math.cos(t * .4) * 4.5, 0, Math.sin(t * .4) * 3.2); duck.rotation.y = -t * .4;
+  papers.forEach((p, i) => { if (!p.taken) p.g.position.y = .15 + Math.sin(t * 2 + i) * .12; });
+  cabins.forEach((c, i) => { c.flag.rotation.y = Math.sin(t * 2 + i) * .25; });
+  if (!state.started) {
+    const a = t * .08; camera.position.set(Math.cos(a) * 48, 30, Math.sin(a) * 48); camera.lookAt(0, 0, 0);
+    sun.position.set(-18, 40, 18); sun.target.position.set(0, 0, 0);
+    renderer.render(scene, camera); return;
+  }
+  const a = actor();
+  let mx = joyX + ((keys.has('d') || keys.has('arrowright')) ? 1 : 0) - ((keys.has('a') || keys.has('arrowleft')) ? 1 : 0);
+  let mz = joyY + ((keys.has('s') || keys.has('arrowdown')) ? 1 : 0) - ((keys.has('w') || keys.has('arrowup')) ? 1 : 0);
+  const len = Math.hypot(mx, mz), moving = !state.inside && !state.over && len > .08;
+  const swimming = !state.riding && zoneAt(player.position.x, player.position.z) === 'pond';
+  if (moving) {
+    mx /= Math.max(1, len); mz /= Math.max(1, len);
+    const speed = (state.riding ? state.riding.speed : swimming ? 2.4 : 5) * (state.owned.has('speed') ? 1.35 : 1);
+    const r = state.riding ? 1.3 : .45;
+    const nx = a.position.x + mx * speed * dt, nz = a.position.z + mz * speed * dt;
+    if (canMove(nx, a.position.z, r)) a.position.x = nx;
+    if (canMove(a.position.x, nz, r)) a.position.z = nz;
+    const ang = Math.atan2(-mx, -mz);
+    a.rotation.y += Math.atan2(Math.sin(ang - a.rotation.y), Math.cos(ang - a.rotation.y)) * Math.min(1, dt * 9);
+  }
+  // 애니메이션
+  if (!state.riding) {
+    player.position.y = swimming ? -.55 + Math.sin(t * 4.5) * .08 : 0;
+    playerBody.legs.forEach((l, i) => l.rotation.x = moving ? Math.sin(t * 11 + i * Math.PI) * .55 : 0);
+    playerBody.arms.forEach((l, i) => l.rotation.x = moving ? Math.sin(t * 11 + i * Math.PI + Math.PI) * .5 : (swimming ? -2.4 + Math.sin(t * 5 + i) * .4 : 0));
+  }
+  vehicles.forEach(v => {
+    const ridingThis = state.riding === v && moving;
+    if (v.id === 'horse') { v.obj.position.y = ridingThis ? Math.sin(t * 11) * .08 : Math.sin(t * 2) * .02; v.legs.forEach((l, i) => l.rotation.x = ridingThis ? Math.sin(t * 11 + i * Math.PI * .85) * .35 : 0); v.tail.rotation.z = Math.sin(t * 3) * .15; }
+  });
+  if (guide) { guide.g.rotation.y = Math.atan2(guide.g.position.x - player.position.x, guide.g.position.z - player.position.z) ; guide.arms[1].rotation.x = Math.sin(t * 3) * .4 - 2.2 * (Math.hypot(guide.g.position.x - a.position.x, guide.g.position.z - a.position.z) < 8 ? 1 : 0) ; }
+  // 자동 이벤트: 힌트 종이, 장소 발견
+  if (!state.riding) for (const p of papers) if (!p.taken && Math.hypot(p.x - player.position.x, p.z - player.position.z) < 1.6) {
+    p.taken = true; p.g.visible = false; state.papers++; state.items.lens++;
+    Audio.fx('pick'); addCoins(2); toast(`📜 힌트 종이 발견! (${state.papers}/3) 돋보기 +1 — 오두막에서 오답 하나를 지울 수 있어요.`, 3800);
+  }
+  const zone = zoneAt(a.position.x, a.position.z) || '';
+  if (zone !== lastZone) {
+    lastZone = zone;
+    if ((zone === 'pond' || zone === 'flowers') && !autoZoneDone.has(zone)) { autoZoneDone.add(zone); addCoins(3, zone === 'pond' ? '💧 반짝이는 연못 발견!' : '🌼 야생화 꽃밭 발견! 힌트 종이 3장을 찾아보세요.'); }
+    const showCrops = zone === 'field' && !state.riding;
+    $('crop-pick').classList.toggle('hidden', !showCrops);
+    if (showCrops && !state.selectedCrop) toast('텃밭이에요! 오른쪽 아래에서 수확할 작물을 골라요.');
+  }
+  // 상호작용 버튼
+  action = computeAction();
+  const key = action ? action.id + (action.label || '') + (action.hint || '') : '';
+  if (key !== lastActKey) {
+    lastActKey = key;
+    const btn = $('act');
+    if (action && action.label) { btn.innerHTML = `${action.label}<span class="key">E</span>`; btn.classList.remove('hidden'); } else btn.classList.add('hidden');
+    let place = '숲길';
+    if (zone.startsWith('cabin:')) place = `오두막 ${cabins[+zone.slice(6)].num}번 근처`; else if (zone && PLACES[zone]) place = PLACES[zone].name;
+    $('place-name').textContent = state.riding ? `${place} · ${state.riding.name}` : place;
+    $('place-hint').textContent = action?.hint || (swimming ? '첨벙첨벙 수영 중' : '자유롭게 둘러보세요');
+  }
+  // 길잡이 화살표
+  if (arrow.visible) { const tg = nearestUnsolved(); if (tg) { arrow.position.set(a.position.x, (state.riding ? 4.2 : 3.2) + Math.sin(t * 3) * .12, a.position.z); arrow.rotation.y = Math.atan2(-(tg.door.x - a.position.x), -(tg.door.z - a.position.z)); } else arrow.visible = false; }
+  // 카메라 · 그림자
+  const portrait = innerWidth < innerHeight;
+  camTarget.set(a.position.x + 5, a.position.y + (portrait ? 28 : 24), a.position.z + (portrait ? 19 : 17));
+  camera.position.lerp(camTarget, Math.min(1, dt * 4));
+  camLook.set(a.position.x, 1.2, a.position.z - 1);
+  camera.lookAt(camLook);
+  sun.position.set(a.position.x - 18, 40, a.position.z + 18); sun.target.position.set(a.position.x, 0, a.position.z);
+  if (frameN % 3 === 0) drawMap(mini, 340, false);
+  if (!state.inside || state.inside === 'map') renderer.render(scene, camera);
+}
+renderMissions();
+frame();
+// 주아 글꼴이 늦게 도착하면 3D 글자판을 다시 그려요
+if (document.fonts && document.fonts.load) document.fonts.load('54px Jua', labels.map(l => l.text).join('') + '0123456789✓').then(() => labels.forEach(l => { l.draw(); l.t.needsUpdate = true; })).catch(() => {});
+
+// 개발·검증용 (콘솔에서 확인할 때만 사용)
+window.__forest = {state, cabins, QUESTIONS, SRC_CARDS, openCabin, openShop, openMap, closeMap, showEnding, canMove, player:() => player};
+})();
+</script>
+</body>
+</html>
