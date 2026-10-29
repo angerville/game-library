@@ -90,6 +90,28 @@ button:disabled{cursor:not-allowed;opacity:.5}
 .missions li.done{opacity:.6}
 .missions li.done .mk{background:#9be07a;border-color:#9be07a;color:var(--pine)}
 .buffs{display:flex;gap:6px;flex-wrap:wrap}
+.lvl{display:inline-flex;align-items:center;gap:4px;background:#ffffff1f;border:1px solid #ffffff55;border-radius:999px;padding:2px 10px;font-family:var(--font-title);font-size:14px;color:var(--gold)}
+.lvl.up{animation:cpop .5s 3}
+.next-lv{font-size:12px;opacity:.85}
+/* ---------- 레벨 업 ---------- */
+#levelup{z-index:42;background:radial-gradient(circle,rgba(248,203,101,.25),rgba(6,22,17,.7))}
+.lv-card{position:relative;width:100%;max-width:470px;padding:30px 26px 24px;text-align:center;overflow:hidden;margin:auto;animation:lvIn .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes lvIn{from{transform:scale(.4) rotate(-6deg);opacity:0}}
+.lv-card::before{content:"";position:absolute;inset:-60%;background:repeating-conic-gradient(from 0deg,#f8cb6533 0 12deg,transparent 12deg 24deg);animation:spin 14s linear infinite;z-index:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lv-card > *{position:relative;z-index:1}
+.lv-burst{display:inline-block;font-family:var(--font-title);font-size:20px;letter-spacing:.12em;color:#fff;background:linear-gradient(90deg,#e2a93a,#d9573f);border-radius:999px;padding:6px 18px;box-shadow:0 4px 0 #9a3a26}
+.lv-icon{font-size:76px;line-height:1;margin:14px 0 4px;animation:bounce 1s ease-in-out infinite}
+@keyframes bounce{50%{transform:translateY(-10px) scale(1.06)}}
+.lv-card h2{font-family:var(--font-title);font-weight:400;font-size:38px;margin:0;color:var(--pine)}
+.lv-sub{margin:4px 0 14px;color:var(--ink-soft)}
+.lv-gets{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:7px;text-align:left}
+.lv-gets li{background:#fff;border-radius:14px;padding:9px 12px;font-weight:700;display:flex;gap:10px;align-items:center;animation:actIn .4s both}
+.lv-gets li:nth-child(2){animation-delay:.15s}.lv-gets li:nth-child(3){animation-delay:.3s}
+.lv-gets li i{font-style:normal;font-size:22px}
+.lv-learned{background:var(--leaf-soft);border-radius:14px;padding:10px 14px;text-align:left;font-size:14px;margin-bottom:16px}
+.lv-learned b{font-family:var(--font-title);font-weight:400;font-size:16px;color:var(--pine)}
+.lv-learned ol{margin:4px 0 0;padding-left:20px;line-height:1.6}
 .buff{background:#ffffff22;border:1px solid #ffffff44;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700}
 
 #hud-right{top:12px;right:12px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
@@ -258,6 +280,7 @@ button:disabled{cursor:not-allowed;opacity:.5}
       <span class="hearts" id="hearts" aria-label="하트"></span>
       <span class="coins" id="coins" aria-live="polite">🪙 0</span>
     </div>
+    <div class="row" style="margin-top:6px"><span class="lvl" id="lvl">🌱 견습 탐험가</span><span class="next-lv" id="next-lv">다음 등급까지 5문제</span></div>
     <div class="progress">
       <div class="lbl"><span>해결한 오두막</span><b id="prog-txt">0 / 20</b></div>
       <div class="bar"><i id="prog-bar"></i></div>
@@ -307,6 +330,7 @@ button:disabled{cursor:not-allowed;opacity:.5}
           <li><b>하트 5개</b> — 틀리면 하트가 1개 줄어요. 모두 잃으면 모험 실패!</li>
           <li><b>상점</b> — 물건을 사려면 <b>출처 확인 문제</b>를 맞혀야 해요.</li>
           <li><b>지도</b> — 오른쪽 위 지도 또는 <kbd>M</kbd> 키. 노란 집 = 아직 안 푼 오두막</li>
+          <li><b>레벨 업</b> — 5문제마다 등급이 올라 캐릭터가 멋있어지고 탈것이 진화해요! 여우 친구도 생겨요.</li>
           <li><b>탈것</b> — 말·자동차·자전거를 타고 빨리 달려요. (오두막에는 내려서 들어가요)</li>
         </ol>
       </div>
@@ -382,6 +406,19 @@ button:disabled{cursor:not-allowed;opacity:.5}
         <div class="travel" id="travel"><b>✨ 빠른 이동</b></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- 레벨 업 -->
+<div class="overlay hidden" id="levelup" role="dialog" aria-modal="true" aria-labelledby="lv-name">
+  <div class="paper lv-card">
+    <span class="lv-burst">LEVEL UP!</span>
+    <div class="lv-icon" id="lv-icon" aria-hidden="true">🎒</div>
+    <h2 id="lv-name">숲 탐험가</h2>
+    <p class="lv-sub" id="lv-sub">오두막 5곳 해결!</p>
+    <ul class="lv-gets" id="lv-gets"></ul>
+    <div class="lv-learned"><b>📜 이번 등급에서 푼 문제</b><ol id="lv-learned"></ol></div>
+    <button class="btn btn-gold" id="lv-ok" type="button">멋지다! 계속 모험하기 ▶</button>
   </div>
 </div>
 
@@ -518,7 +555,7 @@ const state = {
   char:'steven', started:false, inside:null, riding:null,
   coins:0, hearts:MAX_HEARTS, solved:0, wrong:0, items:{lens:0}, owned:new Set(),
   visited:new Set(), harvested:new Set(), harvestTimes:[], papers:0, shopBought:0,
-  selectedCrop:null, startTime:0, over:false
+  selectedCrop:null, startTime:0, over:false, level:0, solvedQs:[]
 };
 const rng = (() => { let s = 20261029; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; })();
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -557,7 +594,8 @@ const Audio = (() => {
     pick(){ tone(660,0,.1,'sine',.12,1320); },
     win(){ [523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.26,'triangle',.12)); },
     lose(){ [392,330,262,196].forEach((f,i)=>tone(f,i*.2,.32,'triangle',.11)); },
-    mount(){ tone(330,0,.12,'square',.05,660); }
+    mount(){ tone(330,0,.12,'square',.05,660); },
+    level(){ [392,523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.3,'triangle',.12)); [1568,2093].forEach((f,i)=>tone(f,.6+i*.12,.4,'sine',.07)); }
   };
   return {
     fx(n){ if (sfxOn && FX[n]) try { FX[n](); } catch (e) {} },
@@ -793,16 +831,16 @@ function makePerson(kind){
   ball(g, .34, skin, 0, 2.05, 0);
   for (const x of [-.12, .12]) ball(g, .045, mat(0x1d2a24), x, 2.08, -.31);
   box(g, .14, .04, .04, mat(0x8a2b2b), 0, 1.93, -.32);
+  let cap = [];
   if (maria) {
     ball(g, .36, hair, 0, 2.15, .06).scale.set(1, .85, 1);
     box(g, .62, .62, .2, hair, 0, 1.82, .22);
     ball(g, .17, hair, 0, 2.2, .46); ball(g, .08, mat(0xe4577d), 0, 2.3, .38);
   } else {
     ball(g, .36, hair, 0, 2.14, .06).scale.set(1, .8, 1);
-    cyl(g, .37, .37, .2, mat(0xd9573f), 0, 2.32, 0, 16);
-    box(g, .5, .05, .34, mat(0xb23e29), 0, 2.24, -.36);
+    cap = [cyl(g, .37, .37, .2, mat(0xd9573f), 0, 2.32, 0, 16), box(g, .5, .05, .34, mat(0xb23e29), 0, 2.24, -.36)];
   }
-  return {g, legs, arms};
+  return {g, legs, arms, cap, acc:{}};
 }
 
 /* ---------- 탈것 (버전 1 모델을 다듬음) ---------- */
@@ -813,12 +851,12 @@ function makeHorse(){
   box(h, .75, .7, 1.05, coat, 0, 3.03, -1.08).rotation.x = .16;
   box(h, .64, .34, .55, mat(0xc28f67), 0, 2.8, -1.7);
   for (const x of [-.29, .29]) { box(h, .15, .4, .19, dark, x, 3.53, -1.06); ball(h, .07, dark, x * 1.25, 3.12, -1.57); }
-  box(h, .25, .8, .65, dark, 0, 3.12, -.55).rotation.x = -.4;
+  const mane = box(h, .25, .8, .65, dark, 0, 3.12, -.55); mane.rotation.x = -.4;
   const legs = [];
   for (const x of [-.37, .37]) for (const z of [-.73, .72]) { const p = new THREE.Group(); p.position.set(x, 1.35, z); h.add(p); box(p, .24, 1.14, .27, coat, 0, -.58, 0); box(p, .31, .18, .37, dark, 0, -1.11, -.04); legs.push(p); }
   const tail = box(h, .28, 1.15, .3, dark, 0, 1.42, 1.18); tail.rotation.x = -.48;
   box(h, 1.2, .22, .95, mat(0xd9573f), 0, 2.43, .18);
-  return {obj:h, legs, tail, seat:new THREE.Vector3(0, 1.62, .2), pose:'ride'};
+  return {obj:h, legs, tail, mane, seat:new THREE.Vector3(0, 1.62, .2), pose:'ride'};
 }
 function makeCar(){
   const c = new THREE.Group(); const red = mat(0xb85137), wheel = mat(0x26312d);
@@ -865,6 +903,145 @@ function setupCharacters(){
   const nm = label(other === 'maria' ? '마리아' : '스티븐', {w:2.2, size:56, width:240}); nm.position.y = 3; guide.g.add(nm);
   guide.name = other === 'maria' ? '마리아' : '스티븐';
 }
+
+/* ---------- 레벨 업 · 성장 · 진화 ---------- */
+const LEVELS = [
+  {at:0,  icon:'🌱', name:'견습 탐험가'},
+  {at:5,  icon:'🎒', name:'숲 탐험가',     gets:[['🎒','배낭과 나뭇잎 배지를 얻었어요'],['🚲','자전거 → 바구니 달린 전기자전거'],['👟','걷는 속도가 빨라졌어요']]},
+  {at:10, icon:'🔍', name:'출처 탐정',     gets:[['🎩','탐정 모자·망토·돋보기'],['🐴','말 → 빛나는 갈기 말'],['🦊','아기 여우 친구가 따라와요']]},
+  {at:15, icon:'🛡️', name:'저작권 수호자', gets:[['✨','반짝이는 수호자 조끼, 발밑의 빛'],['🚗','자동차 → 나무 오픈카'],['🦊','여우가 가까운 노란 오두막 쪽으로 길을 알려 줘요']]},
+  {at:20, icon:'👑', name:'숲의 크리에이터', gets:[['👑','금빛 왕관과 금빛 망토'],['🪽','말 → 날개 달린 말'],['🌳','숲의 모든 출처를 지켜 냈어요!']]}
+];
+const levelOf = n => LEVELS.reduce((l, L, i) => n >= L.at ? i : l, 0);
+const pScale = () => 1 + state.level * .05;
+let fox = null;
+const effects = [];
+const glowMat = (c, o = .8) => new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:o, roughness:.4});
+function applyLevel(lv){
+  const b = playerBody, A = b.acc, g = b.g;
+  if (lv >= 1 && !A.pack) {
+    A.pack = box(g, .5, .55, .25, mat(0x8a5a3a), 0, 1.35, .33);
+    box(g, .52, .18, .28, mat(0x4f9a55), 0, 1.6, .33);
+    A.badge = ball(g, .08, glowMat(0x6fd36f, .5), .2, 1.52, -.23);
+  }
+  if (lv >= 2 && !A.hat) {
+    b.cap.forEach(m => m.visible = false);
+    A.hat = new THREE.Group(); g.add(A.hat);
+    cyl(A.hat, .5, .5, .05, mat(0x6b4a2e), 0, 2.36, 0, 18); cyl(A.hat, .3, .34, .34, mat(0x6b4a2e), 0, 2.56, 0, 16); cyl(A.hat, .345, .345, .08, mat(0xd9573f), 0, 2.44, 0, 16);
+    A.capeMat = new THREE.MeshStandardMaterial({color:0x6b3fa0, roughness:.7, side:THREE.DoubleSide});
+    A.cape = new THREE.Group(); A.cape.position.set(0, 1.72, .26); g.add(A.cape);
+    mesh(new THREE.PlaneGeometry(.72, 1.15), A.capeMat, A.cape, 0, -.58, 0);
+    const lens = new THREE.Group(); lens.position.set(0, -.78, -.12); b.arms[1].add(lens);
+    mesh(new THREE.TorusGeometry(.12, .03, 8, 18), mat(0xe2a93a), lens, 0, -.12, 0);
+    cyl(lens, .025, .025, .2, mat(0x5c3a24), 0, .04, 0, 6);
+  }
+  if (lv >= 3 && !A.vest) {
+    A.vest = box(g, .74, .58, .48, new THREE.MeshStandardMaterial({color:0x9fc3e0, metalness:.6, roughness:.3, emissive:0x2a5a8a, emissiveIntensity:.25}), 0, 1.4, 0);
+    A.ring = mesh(new THREE.TorusGeometry(.6, .05, 8, 32), glowMat(0xf8cb65, 1.2), g, 0, .06, 0, false); A.ring.rotation.x = Math.PI / 2;
+  }
+  if (lv >= 4 && !A.crown) {
+    A.crown = new THREE.Group(); A.crown.position.y = 2.82; g.add(A.crown);
+    const gold = new THREE.MeshStandardMaterial({color:0xf8cb65, metalness:.7, roughness:.25, emissive:0x8a6010, emissiveIntensity:.4});
+    cyl(A.crown, .3, .3, .16, gold, 0, 0, 0, 16);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; mesh(new THREE.ConeGeometry(.07, .2, 6), gold, A.crown, Math.cos(a) * .27, .17, Math.sin(a) * .27); ball(A.crown, .04, glowMat(0xd9573f, .6), Math.cos(a) * .3, .02, Math.sin(a) * .3); }
+    A.capeMat.color.setHex(0xf8cb65); A.capeMat.emissive = new THREE.Color(0x7a5a10); A.capeMat.emissiveIntensity = .3;
+  }
+  // 탈것 진화
+  const V = id => vehicles.find(v => v.id === id);
+  const bike = V('bike'), horse = V('horse'), car = V('car');
+  if (lv >= 1 && !bike.evolved) {
+    bike.evolved = 1; bike.name = '전기자전거'; bike.speed = 13;
+    box(bike.obj, .5, .3, .42, mat(0xc49a5a), 0, 1.28, -1.08);
+    box(bike.obj, .22, .3, .42, glowMat(0x6fd36f, .7), 0, 1.0, .12);
+    ball(bike.obj, .09, glowMat(0xfff1a8, 1.2), 0, 1.52, -1.0);
+  }
+  if (lv >= 2 && !horse.evolved) {
+    horse.evolved = 1; horse.name = '빛나는 갈기 말'; horse.speed = 12;
+    const shine = glowMat(0xf8cb65, .9); horse.mane.material = shine; horse.tail.material = shine;
+  }
+  if (lv >= 3 && !car.evolved) {
+    car.evolved = 1; car.name = '나무 오픈카'; car.speed = 16;
+    const wood = mat(0x9a6a43), red = mat(0xb85137);
+    car.obj.traverse(o => { if (o.isMesh && o.material === red) o.material = wood; });
+    box(car.obj, 2.4, .12, .14, mat(0x4f9a55), 0, 1.3, -1.82); box(car.obj, 2.4, .12, .14, mat(0x4f9a55), 0, 1.3, 1.82);
+    [-.6, 0, .6].forEach((x, i) => ball(car.obj, .14, mat([0xff9fb2, 0xffd65a, 0xe4c8ea][i]), x, 1.44, -1.3));
+  }
+  if (lv >= 4 && horse.evolved < 2) {
+    horse.evolved = 2; horse.name = '날개 달린 말'; horse.speed = 15;
+    horse.wings = [-1, 1].map(side => {
+      const w = new THREE.Group(); w.position.set(side * .55, 2.35, .05); horse.obj.add(w);
+      for (let i = 0; i < 3; i++) { const f = mesh(new THREE.PlaneGeometry(1.1 - i * .2, .34), new THREE.MeshStandardMaterial({color:0xfffaf0, roughness:.6, side:THREE.DoubleSide, emissive:0x806a30, emissiveIntensity:.15}), w, side * (.55 - i * .1), .1 - i * .22, i * .12); f.rotation.x = -Math.PI / 2; }
+      w.userData.side = side; return w;
+    });
+  }
+  if (lv >= 2 && !fox) fox = makeFox();
+  if (fox) fox.g.scale.setScalar([0, 0, .7, .85, 1][lv]);
+  if (!state.riding) player.scale.setScalar(pScale());
+}
+function makeFox(){
+  const g = new THREE.Group(); scene.add(g);
+  const orange = mat(0xe8843a), white = mat(0xfff4e3), dark = mat(0x2b2a2a);
+  box(g, .45, .36, .8, orange, 0, .5, 0); box(g, .3, .22, .3, white, 0, .45, -.36);
+  box(g, .4, .36, .38, orange, 0, .78, -.5); box(g, .18, .14, .22, white, 0, .72, -.74); ball(g, .045, dark, 0, .76, -.86);
+  for (const x of [-.12, .12]) { mesh(new THREE.ConeGeometry(.08, .22, 4), orange, g, x, 1.04, -.48); ball(g, .035, dark, x * .9, .84, -.69); }
+  const legs = [];
+  for (const x of [-.14, .14]) for (const z of [-.28, .28]) { const p = new THREE.Group(); p.position.set(x, .34, z); g.add(p); box(p, .1, .32, .1, mat(0x5c3a24), 0, -.16, 0); legs.push(p); }
+  const tail = new THREE.Group(); tail.position.set(0, .58, .4); g.add(tail);
+  const t1 = mesh(new THREE.CylinderGeometry(.05, .17, .62, 8), orange, tail, 0, 0, .3); t1.rotation.x = Math.PI / 2 + .5;
+  ball(tail, .12, white, 0, .15, .6);
+  const mark = label('!', {bg:'rgba(248,203,101,.97)', fg:'#143d31', w:.7, size:70, width:110}); mark.position.y = 1.7; mark.visible = false; g.add(mark);
+  const a = actor(); g.position.set(a.position.x + 2, 0, a.position.z + 2);
+  return {g, legs, tail, mark};
+}
+function levelUpFx(at){
+  const pillar = mesh(new THREE.CylinderGeometry(1.3, 1.3, 14, 24, 1, true), new THREE.MeshBasicMaterial({color:0xffe08a, transparent:true, opacity:.75, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false}), scene, at.x, 7, at.z, false);
+  pillar.scale.y = .01;
+  effects.push({obj:pillar, t:0, life:1.8, kind:'pillar'});
+  const cols = [0xf8cb65, 0xff9fb2, 0x9be07a, 0xffffff, 0xe4c8ea];
+  for (let i = 0; i < 46; i++) {
+    const p = mesh(new THREE.PlaneGeometry(.22, .14), new THREE.MeshBasicMaterial({color:cols[i % 5], side:THREE.DoubleSide, transparent:true}), scene, at.x, 1.5, at.z, false);
+    const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 5;
+    effects.push({obj:p, t:0, life:1.6 + Math.random() * .8, kind:'petal', v:new THREE.Vector3(Math.cos(a) * sp, 6 + Math.random() * 6, Math.sin(a) * sp), spin:Math.random() * 10});
+  }
+}
+function bloomAt(c){
+  for (let i = 0; i < 12; i++) {
+    const a = i / 12 * Math.PI * 2 + .3, r = 4.6 + (i % 3) * .5;
+    const x = c.x + Math.cos(a) * r, z = c.z + Math.sin(a) * r;
+    if (Math.hypot(x - c.door.x, z - c.door.z) < 1.6) continue;
+    const fg = new THREE.Group(); fg.position.set(x, 0, z); fg.scale.setScalar(.01); scene.add(fg);
+    cyl(fg, .04, .05, .6, mat(0x4f8347), 0, .3, 0, 5);
+    ball(fg, .2, mat([0xffd392, 0xff9fb2, 0xe4c8ea, 0xffffff][i % 4]), 0, .66, 0);
+    effects.push({obj:fg, t:-i * .06, life:.9, kind:'grow'});
+  }
+}
+function updateEffects(dt){
+  for (let i = effects.length - 1; i >= 0; i--) {
+    const e = effects[i]; e.t += dt; if (e.t < 0) continue;
+    const k = Math.min(1, e.t / e.life);
+    if (e.kind === 'pillar') { e.obj.scale.y = Math.min(1, e.t * 3); e.obj.rotation.y += dt * 2; e.obj.material.opacity = .75 * (1 - k); }
+    else if (e.kind === 'petal') { e.v.y -= 12 * dt; e.obj.position.addScaledVector(e.v, dt); e.obj.rotation.x += e.spin * dt; e.obj.rotation.y += e.spin * dt; e.obj.material.opacity = 1 - k; }
+    else if (e.kind === 'grow') { const sc = k < .7 ? k / .7 * 1.25 : 1.25 - (k - .7) / .3 * .25; e.obj.scale.setScalar(Math.max(.01, sc)); }
+    if (k >= 1) { effects.splice(i, 1); if (e.kind !== 'grow') { scene.remove(e.obj); e.obj.geometry.dispose(); e.obj.material.dispose(); } }
+  }
+}
+let afterLevelCard = null;
+function showLevelCard(lv, after){
+  const L = LEVELS[lv];
+  state.inside = 'levelup'; afterLevelCard = after || null;
+  $('lv-icon').textContent = L.icon; $('lv-name').textContent = L.name;
+  $('lv-sub').textContent = `오두막 ${L.at}곳 해결! 이제 ‘${L.name}’ 등급이에요.`;
+  $('lv-gets').innerHTML = L.gets.map(([i, t]) => `<li><i>${i}</i><span>${t}</span></li>`).join('');
+  $('lv-learned').innerHTML = state.solvedQs.slice(-5).map(q => `<li>${QUESTIONS[q].q}</li>`).join('');
+  $('levelup').classList.remove('hidden');
+  Audio.fx('level'); setTimeout(() => $('lv-ok').focus(), 300);
+  const lb = $('lvl'); lb.classList.remove('up'); void lb.offsetWidth; lb.classList.add('up');
+}
+$('lv-ok').addEventListener('click', () => {
+  $('levelup').classList.add('hidden'); state.inside = null; lastActKey = ''; document.activeElement?.blur();
+  const f = afterLevelCard; afterLevelCard = null;
+  if (f) f(); else toast(`${LEVELS[state.level].icon} ${LEVELS[state.level].name}! 앞으로 ${GOAL - state.solved}문제 남았어요.`, 3200);
+});
 
 /* ---------- 길잡이 화살표 ---------- */
 const arrow = new THREE.Group(); arrow.visible = false; scene.add(arrow);
@@ -929,6 +1106,9 @@ function renderHUD(){
   for (let i = 0; i < MAX_HEARTS; i++) h.insertAdjacentHTML('beforeend', `<svg class="${i < state.hearts ? '' : 'lost'}"><use href="#heart"/></svg>`);
   h.setAttribute('aria-label', `하트 ${state.hearts}개`);
   $('prog-txt').textContent = `${state.solved} / ${GOAL}`;
+  const L = LEVELS[state.level], N = LEVELS[state.level + 1];
+  $('lvl').textContent = `${L.icon} ${L.name} · Lv.${state.level + 1}`;
+  $('next-lv').textContent = N ? `다음 등급까지 ${N.at - state.solved}문제` : '최고 등급!';
   $('prog-bar').style.width = Math.min(100, state.solved / GOAL * 100) + '%';
   const b = [];
   if (state.owned.has('speed')) b.push('👟 빠른 신발');
@@ -997,7 +1177,7 @@ function doAction(){
 }
 function mountVehicle(v){
   state.riding = v; state.visited.add('ride');
-  v.obj.add(player); player.position.copy(v.seat); player.rotation.set(0, 0, 0); player.scale.setScalar(v.scale || 1);
+  v.obj.add(player); player.position.copy(v.seat); player.rotation.set(0, 0, 0); player.scale.setScalar((v.scale || 1) * pScale());
   const sit = v.pose === 'ride' ? -1.1 : v.pose === 'bike' ? -.6 : -1.4;
   playerBody.legs.forEach((l, i) => { l.rotation.x = sit; l.rotation.z = v.pose === 'ride' ? (i ? -.5 : .5) : 0; });
   playerBody.arms.forEach(a => a.rotation.x = -.9);
@@ -1006,7 +1186,7 @@ function mountVehicle(v){
 function dismount(){
   const v = state.riding; if (!v) return;
   const side = new THREE.Vector3(v.id === 'car' ? 2.5 : 2, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), v.obj.rotation.y);
-  scene.add(player); player.scale.setScalar(1);
+  scene.add(player); player.scale.setScalar(pScale());
   let px = v.obj.position.x + side.x, pz = v.obj.position.z + side.z;
   if (!canMove(px, pz, .45)) { px = v.obj.position.x - side.x; pz = v.obj.position.z - side.z; }
   player.position.set(px, 0, pz); player.rotation.y = v.obj.rotation.y;
@@ -1060,7 +1240,7 @@ function answerCabin(orig, btn){
   c.tries++;
   const fb = $('cabin-fb');
   if (orig === q.c) {
-    c.solved = true; state.solved++;
+    c.solved = true; state.solved++; state.solvedQs.push(c.q); bloomAt(c);
     c.lampMat.color.setHex(0x3fbf6e); c.lampMat.emissive.setHex(0x1f9a4e); c.flagMat.color.setHex(0x3fbf6e);
     const gain = addCoins(CABIN_COINS);
     fb.className = 'fb good'; $('cabin-fb-t').textContent = c.tries === 1 ? '정답! 한 번에 맞혔어요!' : '정답!';
@@ -1096,11 +1276,19 @@ $('btn-lens').addEventListener('click', () => {
 $('btn-leave').addEventListener('click', () => {
   const end = $('btn-leave').dataset.end;
   $('cabin').classList.add('hidden'); state.inside = null; Audio.fx('door');
-  if (end) { delete $('btn-leave').dataset.end; $('btn-leave').textContent = '🚪 오두막 나가기'; return showEnding(end === 'win'); }
-  if (curCabin && curCabin.solved) { const left = GOAL - state.solved; toast(`오두막 ${curCabin.num}번 해결! 앞으로 ${left}문제 남았어요. 지도에서 노란 오두막을 찾아요.`, 3600); }
   // 문 앞으로 살짝 물러나기
   if (curCabin) { const c = curCabin, dx = c.door.x - c.x, dz = c.door.z - c.z, l = Math.hypot(dx, dz); player.position.set(c.door.x + dx / l * 1.2, 0, c.door.z + dz / l * 1.2); player.rotation.y = Math.atan2(-dx, -dz); }
+  const solvedHere = curCabin && curCabin.solved, num = curCabin && curCabin.num;
   curCabin = null; lastActKey = ''; document.activeElement?.blur();
+  if (end) { delete $('btn-leave').dataset.end; $('btn-leave').textContent = '🚪 오두막 나가기'; }
+  if (end === 'lose') return showEnding(false);
+  const lv = levelOf(state.solved);
+  if (lv > state.level) {
+    state.level = lv; applyLevel(lv); renderHUD(); levelUpFx(player.position);
+    return setTimeout(() => showLevelCard(lv, end === 'win' ? () => showEnding(true) : null), 900);
+  }
+  if (end === 'win') return showEnding(true);
+  if (solvedHere) toast(`오두막 ${num}번 해결! 앞으로 ${GOAL - state.solved}문제 남았어요. 지도에서 노란 오두막을 찾아요.`, 3600);
 });
 
 /* =========================================================
@@ -1205,7 +1393,8 @@ function showEnding(win){
   state.over = true; state.inside = 'end';
   const sec = Math.round((Date.now() - state.startTime) / 1000);
   $('end-title').textContent = win ? '🎉 모험 성공!' : '모험 실패…';
-  $('end-lead').innerHTML = win ? `오두막 ${GOAL}곳의 저작권·출처 문제를 모두 풀었어요!<br>이제 그림·글·음악을 쓸 때 출처를 밝힐 수 있어요.` : `하트를 모두 잃었어요. 출처 밝히는 법을 다시 떠올리며<br>한 번 더 도전해 볼까요?`;
+  const fl = LEVELS[state.level];
+  $('end-lead').innerHTML = `<b style="font-family:var(--font-title);font-size:22px;color:var(--pine)">${fl.icon} 최종 등급: ${fl.name} (Lv.${state.level + 1})</b><br>` + (win ? `오두막 ${GOAL}곳의 저작권·출처 문제를 모두 풀었어요!<br>이제 그림·글·음악을 쓸 때 출처를 밝힐 수 있어요.` : `하트를 모두 잃었어요. 출처 밝히는 법을 다시 떠올리며<br>한 번 더 도전해 볼까요?`);
   $('end-art').innerHTML = win
     ? '<path d="M30 10 H90 V40 C90 60 76 72 60 72 C44 72 30 60 30 40 Z" fill="#ffd65a" stroke="#143d31" stroke-width="5"/><path d="M30 18 H14 C14 38 22 46 32 46 M90 18 H106 C106 38 98 46 88 46" stroke="#143d31" stroke-width="5" fill="none"/><rect x="52" y="72" width="16" height="14" fill="#e2a93a" stroke="#143d31" stroke-width="4"/><rect x="36" y="86" width="48" height="14" rx="4" fill="#7d4628" stroke="#143d31" stroke-width="4"/><path d="M60 22 l5 10 11 1.5-8 7.5 2 11-10-5.5-10 5.5 2-11-8-7.5 11-1.5z" fill="#fff"/>'
     : '<circle cx="60" cy="55" r="44" fill="#ffe1d8"/>' + [0,1,2,3,4].map(i=>`<g transform="translate(${18+i*21} 46) scale(.42)"><path d="M24 42 C10 32 4 24 4 16 C4 9 10 5 15 5 C19 5 22 7 24 11 C26 7 29 5 33 5 C38 5 44 9 44 16 C44 24 38 32 24 42 Z" fill="#c9c2b4"/></g>`).join('');
@@ -1313,7 +1502,7 @@ function frame(){
   const swimming = !state.riding && zoneAt(player.position.x, player.position.z) === 'pond';
   if (moving) {
     mx /= Math.max(1, len); mz /= Math.max(1, len);
-    const speed = (state.riding ? state.riding.speed : swimming ? 2.4 : 5) * (state.owned.has('speed') ? 1.35 : 1);
+    const speed = (state.riding ? state.riding.speed : swimming ? 2.4 : 5 * (state.level >= 1 ? 1.15 : 1)) * (state.owned.has('speed') ? 1.35 : 1);
     const r = state.riding ? 1.3 : .45;
     const nx = a.position.x + mx * speed * dt, nz = a.position.z + mz * speed * dt;
     if (canMove(nx, a.position.z, r)) a.position.x = nx;
@@ -1331,6 +1520,27 @@ function frame(){
     const ridingThis = state.riding === v && moving;
     if (v.id === 'horse') { v.obj.position.y = ridingThis ? Math.sin(t * 11) * .08 : Math.sin(t * 2) * .02; v.legs.forEach((l, i) => l.rotation.x = ridingThis ? Math.sin(t * 11 + i * Math.PI * .85) * .35 : 0); v.tail.rotation.z = Math.sin(t * 3) * .15; }
   });
+  // 성장 장식 · 탈것 날개 · 여우 · 효과
+  const A = playerBody.acc;
+  if (A.cape) A.cape.rotation.x = moving ? .45 + Math.sin(t * 9) * .12 : .12 + Math.sin(t * 2) * .04;
+  if (A.ring) { A.ring.rotation.z += dt * 2; A.ring.scale.setScalar(1 + Math.sin(t * 4) * .08); }
+  if (A.crown) A.crown.rotation.y += dt * .8;
+  vehicles.forEach(v => { if (v.wings) { const fast = state.riding === v && moving; const flap = (fast ? .7 : .25) * Math.sin(t * (fast ? 9 : 3)); v.wings.forEach(w => w.rotation.z = w.userData.side * (.3 + flap)); } });
+  if (fox) {
+    const tg = state.level >= 3 ? nearestUnsolved() : null;
+    let fx, fz;
+    if (tg) { const dx = tg.door.x - a.position.x, dz = tg.door.z - a.position.z, l = Math.hypot(dx, dz) || 1; const lead = Math.min(3.2, l); fx = a.position.x + dx / l * lead + 1; fz = a.position.z + dz / l * lead; }
+    else { const r = a.rotation.y; fx = a.position.x + Math.sin(r) * 2.2 + Math.cos(r) * 1.2; fz = a.position.z + Math.cos(r) * 2.2 - Math.sin(r) * 1.2; }
+    const fdx = fx - fox.g.position.x, fdz = fz - fox.g.position.z, fd = Math.hypot(fdx, fdz);
+    const run = fd > .25;
+    if (fd > 30) fox.g.position.set(fx, 0, fz);
+    else if (run) { const sp = Math.min(fd * 4, 18) * dt; fox.g.position.x += fdx / fd * sp; fox.g.position.z += fdz / fd * sp; fox.g.rotation.y = Math.atan2(-fdx, -fdz); }
+    fox.g.position.y = run ? Math.abs(Math.sin(t * 12)) * .12 : 0;
+    fox.legs.forEach((l, i) => l.rotation.x = run ? Math.sin(t * 14 + i * Math.PI / 2) * .6 : 0);
+    fox.tail.rotation.y = Math.sin(t * (run ? 10 : 3)) * .35;
+    fox.mark.visible = !!tg && !state.riding;
+  }
+  updateEffects(dt);
   if (guide) { guide.g.rotation.y = Math.atan2(guide.g.position.x - player.position.x, guide.g.position.z - player.position.z) ; guide.arms[1].rotation.x = Math.sin(t * 3) * .4 - 2.2 * (Math.hypot(guide.g.position.x - a.position.x, guide.g.position.z - a.position.z) < 8 ? 1 : 0) ; }
   // 자동 이벤트: 힌트 종이, 장소 발견
   if (!state.riding) for (const p of papers) if (!p.taken && Math.hypot(p.x - player.position.x, p.z - player.position.z) < 1.6) {
@@ -1367,7 +1577,7 @@ function frame(){
   camera.lookAt(camLook);
   sun.position.set(a.position.x - 18, 40, a.position.z + 18); sun.target.position.set(a.position.x, 0, a.position.z);
   if (frameN % 3 === 0) drawMap(mini, 340, false);
-  if (!state.inside || state.inside === 'map') renderer.render(scene, camera);
+  if (!state.inside || state.inside === 'map' || state.inside === 'levelup') renderer.render(scene, camera);
 }
 renderMissions();
 frame();
@@ -1375,7 +1585,7 @@ frame();
 if (document.fonts && document.fonts.load) document.fonts.load('54px Jua', labels.map(l => l.text).join('') + '0123456789✓').then(() => labels.forEach(l => { l.draw(); l.t.needsUpdate = true; })).catch(() => {});
 
 // 개발·검증용 (콘솔에서 확인할 때만 사용)
-window.__forest = {state, cabins, QUESTIONS, SRC_CARDS, openCabin, openShop, openMap, closeMap, showEnding, canMove, player:() => player};
+window.__forest = {state, cabins, QUESTIONS, SRC_CARDS, openCabin, openShop, openMap, closeMap, showEnding, canMove, applyLevel, levelOf, LEVELS, vehicles, player:() => player, fox:() => fox};
 })();
 </script>
 </body>
