@@ -231,11 +231,12 @@ button:disabled{cursor:not-allowed}
 
 /* ---------- 결과 ---------- */
 .ending{max-width:980px;margin:6px auto 0;padding:22px;position:relative;overflow:hidden}
-.win-scene{border-radius:22px;overflow:hidden;background:#bfe8ff;aspect-ratio:1000/480}
+.win-scene{border-radius:22px;overflow:hidden;background:linear-gradient(#6cc4f0 50%,#5fb25e 50%);aspect-ratio:16/9}
 .win-scene{position:relative}
 .win-scene svg{width:100%;height:100%;display:block}
 .win-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;transition:opacity .8s}
-.video-tag{position:absolute;left:12px;bottom:10px;background:#000000a8;color:#fff;font-size:13px;font-weight:700;padding:5px 11px;border-radius:999px;transition:opacity .8s}
+.video-tag{position:absolute;left:50%;top:6px;transform:translateX(-50%);white-space:nowrap;background:#000000b8;color:#fff;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;animation:tagOut .8s 4s forwards}
+@keyframes tagOut{to{opacity:0}}
 .win-scene.video-done .win-video,.win-scene.video-done .video-tag{opacity:0;pointer-events:none}
 .replay{display:flex;justify-content:center;margin-top:10px}
 .end-title{font-family:var(--font-title);font-weight:400;font-size:clamp(30px,4.6vw,48px);margin:18px 0 6px;text-align:center}
@@ -622,7 +623,7 @@ button:disabled{cursor:not-allowed}
       <h3 class="credit-sec">버전 2 <small>선생님과 함께 다듬은 버전</small></h3>
       <dl class="credit-list">
         <div class="credit-row"><dt>게임 기획·문제</dt><dd>수제 요공르트 팀 (팀 기획서와 버그 공략집 내용을 그대로 반영)</dd></div>
-        <div class="credit-row"><dt>승리 영상</dt><dd>수제 요공르트 팀이 직접 촬영 · 얼굴 가림(픽셀·캐릭터 스티커)과 소리 제거: Claude Code</dd></div>
+        <div class="credit-row"><dt>승리 영상</dt><dd>수제 요공르트 팀이 직접 촬영 · 도트 게임 화면으로 바꾸기, 얼굴 가림(도트 캐릭터), 소리 제거: Claude Code · 자막 글꼴: 갈무리(Galmuri, SIL OFL) · 색상: PICO-8 팔레트</dd></div>
         <div class="credit-row"><dt>그림·효과음</dt><dd>Claude Code(AI)가 코드로 직접 그림 · 효과음도 코드로 만듦</dd></div>
         <div class="credit-row"><dt>글꼴</dt><dd>주아(Jua), 고운돋움(Gowun Dodum) · SIL 오픈 폰트 라이선스</dd></div>
         <div class="credit-row"><dt>도움 받은 도구</dt><dd>캔바 코드, Claude Code</dd></div>
